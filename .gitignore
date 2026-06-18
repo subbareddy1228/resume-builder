@@ -1,0 +1,16 @@
+﻿# Backend
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/.env
+backend/*.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/tsconfig.tsbuildinfo
+
+# General
+.DS_Store
+*.log
