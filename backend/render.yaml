@@ -13,8 +13,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ANTHROPIC_API_KEY
-        sync: false  # you fill this manually
-
+        sync: false  
 databases:
   - name: resume-builder-db
     databaseName: resume_builder

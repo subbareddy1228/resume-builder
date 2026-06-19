@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60
     cors_origins: str = "http://localhost:5173"
+    anthropic_api_key: str = ""
+    openai_api_key: str = ""
 
     class Config:
         env_file = ".env"

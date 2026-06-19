@@ -3,7 +3,11 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Editor from "./pages/Editor";
 import { useAuth } from "./context/AuthContext";
+import ATS from "./pages/ATS";
+import AISuggest from "./pages/AISuggest";
+import JobMatch from "./pages/JobMatch";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { token } = useAuth();
@@ -21,6 +25,38 @@ export default function App() {
         element={
           <RequireAuth>
             <Dashboard />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/editor/:id"
+        element={
+          <RequireAuth>
+            <Editor />
+          </RequireAuth>
+        }
+      />
+
+      <Route
+        path="/ats/:id"
+        element={
+          <RequireAuth>
+            <ATS />
+          </RequireAuth>
+        }
+      /><Route
+        path="/ai/:id"
+        element={
+          <RequireAuth>
+            <AISuggest />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/jobs/:id"
+        element={
+          <RequireAuth>
+            <JobMatch />
           </RequireAuth>
         }
       />
