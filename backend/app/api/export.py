@@ -27,7 +27,11 @@ def export_pdf(
         raise HTTPException(status_code=404, detail="Resume not found")
 
     try:
-        pdf_bytes = generate_pdf(resume.content, resume.title)
+        pdf_bytes = generate_pdf(
+            resume.content,
+            resume.title,
+            resume.template or "classic"
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
 
@@ -36,7 +40,5 @@ def export_pdf(
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": f'attachment; filename="{filename}"',
-        },
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )

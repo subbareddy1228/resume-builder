@@ -7,8 +7,8 @@ export async function createResume(title: string): Promise<Resume> {
   const defaultContent: ResumeContent = {
     contact: { name: "", email: "", phone: "", location: "", linkedin: "" },
     summary: "",
-    experience: [],
     education: [],
+    experience: [],
     skills: [],
     projects: [],
     certifications: [],
@@ -188,6 +188,16 @@ export async function saveJob(title: string, rawText: string) {
 export async function matchResumeToJobs(resumeId: string): Promise<MatchResult[]> {
   const { data } = await apiClient.post<MatchResult[]>("/api/jobs/match", {
     resume_id: resumeId,
+  });
+  return data;
+}
+
+export async function updateTemplate(
+  id: string,
+  template: string
+): Promise<Resume> {
+  const { data } = await apiClient.put<Resume>(`/api/resumes/${id}`, {
+    template,
   });
   return data;
 }

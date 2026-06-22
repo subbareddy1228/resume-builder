@@ -69,3 +69,18 @@ export interface ResumeContent {
     bullets: string[];
   }[];
 }
+
+export type TemplateId = "classic" | "modern" | "minimal" | "bold";
+
+export interface Template {
+  id: TemplateId;
+  name: string;
+  description: string;
+}
+
+export const TEMPLATES: Template[] = [
+  { id: "classic", name: "Classic", description: "Traditional layout, serif headings" },
+  { id: "modern", name: "Modern", description: "Clean lines, accent colors" },
+  { id: "minimal", name: "Minimal", description: "Ultra clean, maximum whitespace" },
+  { id: "bold", name: "Bold", description: "Strong headers, high contrast" },
+];

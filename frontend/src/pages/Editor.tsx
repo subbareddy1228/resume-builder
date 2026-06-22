@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getResume, updateResume, downloadPDF } from "../api/resumes";
+import { getResume, updateResume, downloadPDF, updateTemplate } from "../api/resumes";
 import { ResumeContent } from "../types/auth";
+import TemplateSelector from "../components/TemplateSelector";
+import { TemplateId } from "../types/auth";
+
 
 const EMPTY_CONTENT: ResumeContent = {
   contact: { name: "", email: "", phone: "", location: "", linkedin: "" },
@@ -28,6 +31,8 @@ export default function Editor() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("Untitled Resume");
   const [content, setContent] = useState<ResumeContent>(EMPTY_CONTENT);
+  const [template, setTemplate] = useState<TemplateId>("classic");
+  const [showTemplates, setShowTemplates] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
@@ -43,6 +48,7 @@ export default function Editor() {
     getResume(id)
       .then((r) => {
         setTitle(r.title);
+        setTemplate((r.template as TemplateId) || "classic");
         const c = r.content as ResumeContent;
         setContent({
           ...EMPTY_CONTENT,
@@ -89,6 +95,16 @@ export default function Editor() {
       alert("PDF export failed. Make sure your resume has content.");
     } finally {
       setExporting(false);
+    }
+  }
+
+  async function handleTemplateChange(newTemplate: TemplateId) {
+    setTemplate(newTemplate);
+    if (!id) return;
+    try {
+      await updateTemplate(id, newTemplate);
+    } catch {
+      console.error("Failed to save template");
     }
   }
 
@@ -211,6 +227,16 @@ export default function Editor() {
           <span className="font-body text-xs text-ink/40">
             {saving ? "Saving..." : saveMsg || "Auto-saved"}
           </span>
+          <button
+            onClick={() => setShowTemplates(!showTemplates)}
+            className={`bg-paper border font-body text-sm px-4 py-1.5 rounded-sm transition ${
+              showTemplates
+                ? "border-moss text-moss"
+                : "border-ink/20 text-ink hover:border-moss hover:text-moss"
+            }`}
+          >
+            🎨 Templates
+          </button>
           <button onClick={handleManualSave} disabled={saving}
             className="bg-paper border border-moss text-moss font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss hover:text-paper transition disabled:opacity-50">
             {saving ? "Saving..." : "Save"}
@@ -233,6 +259,24 @@ export default function Editor() {
           </button>
         </div>
       </header>
+
+      {/* Template selector panel */}
+      {showTemplates && (
+        <div className="border-b border-ink/10 bg-white px-8 py-6">
+          <div className="max-w-lg">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display text-lg text-ink">Choose a Template</h2>
+              <button
+                onClick={() => setShowTemplates(false)}
+                className="font-body text-sm text-ink/40 hover:text-ink"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <TemplateSelector selected={template} onChange={handleTemplateChange} />
+          </div>
+        </div>
+      )}
 
       <div className="flex h-[calc(100vh-57px)]">
 
