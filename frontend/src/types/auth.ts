@@ -13,6 +13,16 @@ export interface AuthResponse {
 
 // add to bottom of src/types/auth.ts
 
+export interface Resume {
+  id: string;
+  user_id: string;
+  title: string;
+  template: string;
+  content: ResumeContent;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ResumeContent {
   contact: {
     name: string;
@@ -37,14 +47,25 @@ export interface ResumeContent {
     year: string;
   }[];
   skills: string[];
-}
-
-export interface Resume {
-  id: string;
-  user_id: string;
-  title: string;
-  template: string;
-  content: ResumeContent;
-  created_at: string;
-  updated_at: string;
+  projects: {
+    id: string;
+    name: string;
+    description: string;
+    tech: string;
+    link: string;
+  }[];
+  certifications: {
+    id: string;
+    name: string;
+    issuer: string;
+    year: string;
+  }[];
+  internships: {
+    id: string;
+    company: string;
+    role: string;
+    start: string;
+    end: string;
+    bullets: string[];
+  }[];
 }
