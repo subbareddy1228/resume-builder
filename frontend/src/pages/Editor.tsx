@@ -29,6 +29,7 @@ export default function Editor() {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [exporting, setExporting] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
   const isFirstLoad = useRef(true);
 
   const debouncedContent = useDebounce(content, 1500);
@@ -57,13 +58,27 @@ export default function Editor() {
     if (!id) return;
     setSaving(true);
     updateResume(id, { title: debouncedTitle, content: debouncedContent })
-      .then(() => setSaveMsg("Saved"))
+      .then(() => setSaveMsg("Saved ✓"))
       .catch(() => setSaveMsg("Save failed"))
       .finally(() => {
         setSaving(false);
         setTimeout(() => setSaveMsg(""), 2000);
       });
   }, [debouncedContent, debouncedTitle]);
+
+  async function handleManualSave() {
+    if (!id) return;
+    setSaving(true);
+    try {
+      await updateResume(id, { title, content });
+      setSaveMsg("Saved ✓");
+    } catch {
+      setSaveMsg("Save failed");
+    } finally {
+      setSaving(false);
+      setTimeout(() => setSaveMsg(""), 2000);
+    }
+  }
 
   async function handleExport() {
     if (!id) return;
@@ -162,13 +177,22 @@ export default function Editor() {
     }));
   }
 
-  function updateSkills(value: string) {
+  function addSkill() {
+    const trimmed = newSkill.trim();
+    if (!trimmed) return;
+    // support pasting comma-separated
+    const incoming = trimmed.split(",").map((s) => s.trim()).filter(Boolean);
     setContent((prev) => ({
       ...prev,
-      skills: value
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      skills: [...prev.skills, ...incoming.filter((s) => !prev.skills.includes(s))],
+    }));
+    setNewSkill("");
+  }
+
+  function removeSkill(index: number) {
+    setContent((prev) => ({
+      ...prev,
+      skills: prev.skills.filter((_, i) => i !== index),
     }));
   }
 
@@ -210,6 +234,13 @@ export default function Editor() {
           <span className="font-body text-xs text-ink/40">
             {saving ? "Saving..." : saveMsg || "Auto-saved"}
           </span>
+          <button
+            onClick={handleManualSave}
+            disabled={saving}
+            className="bg-paper border border-moss text-moss font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss hover:text-paper transition disabled:opacity-50"
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
           <button
             onClick={handleExport}
             disabled={exporting}
@@ -374,14 +405,60 @@ export default function Editor() {
           {/* Skills */}
           <section>
             <h2 className={sectionTitle}>Skills</h2>
-            <label className={labelCls}>Comma-separated</label>
-            <input
-              className={inputCls}
-              value={content.skills.join(", ")}
-              onChange={(e) => updateSkills(e.target.value)}
-              placeholder="React, Python, FastAPI..."
-            />
+
+            {/* Existing skill tags */}
+            {content.skills.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {content.skills.map((skill, i) => (
+                  <span
+                    key={i}
+                    className="flex items-center gap-1 bg-moss/10 text-moss text-xs font-medium px-3 py-1 rounded-full border border-moss/20"
+                  >
+                    {skill}
+                    <button
+                      onClick={() => removeSkill(i)}
+                      className="ml-1 text-moss/60 hover:text-clay transition font-bold leading-none"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Add skill input */}
+            <div className="flex gap-2">
+              <input
+                className={inputCls}
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && addSkill()}
+                placeholder="Type a skill and press Add or Enter..."
+              />
+              <button
+                onClick={addSkill}
+                disabled={!newSkill.trim()}
+                className="bg-moss text-paper font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss/90 transition disabled:opacity-50 whitespace-nowrap"
+              >
+                + Add
+              </button>
+            </div>
+            <p className="font-body text-xs text-ink/40 mt-1">
+              Press Enter or click Add. You can also paste comma-separated skills.
+            </p>
           </section>
+
+          {/* Manual save button at bottom */}
+          <div className="pt-4 pb-8">
+            <button
+              onClick={handleManualSave}
+              disabled={saving}
+              className="w-full bg-moss text-paper font-body text-sm font-medium py-3 rounded-sm hover:bg-moss/90 transition disabled:opacity-60"
+            >
+              {saving ? "Saving..." : saveMsg ? saveMsg : "Save Resume"}
+            </button>
+          </div>
+
         </div>
 
         {/* ── Live preview panel ── */}

@@ -3,7 +3,7 @@ services:
     name: resume-builder-api
     runtime: python
     rootDir: backend
-    buildCommand: pip install -r requirements.txt
+    buildCommand: apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libcairo2 libffi-dev shared-mime-info && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: DATABASE_URL
@@ -14,8 +14,12 @@ services:
         generateValue: true
       - key: ANTHROPIC_API_KEY
         sync: false
+      - key: OPENAI_API_KEY
+        sync: false
       - key: CORS_ORIGINS
         value: https://resume-builder-blue-zeta.vercel.app,http://localhost:5173
+      - key: PYTHON_VERSION
+        value: 3.11.9
 databases:
   - name: resume-builder-db
     databaseName: resume_builder
