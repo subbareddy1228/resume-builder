@@ -13,7 +13,9 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ANTHROPIC_API_KEY
-        sync: false  
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://resume-builder-blue-zeta.vercel.app,http://localhost:5173
 databases:
   - name: resume-builder-db
     databaseName: resume_builder
