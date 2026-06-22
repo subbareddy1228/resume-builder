@@ -10,6 +10,9 @@ export async function createResume(title: string): Promise<Resume> {
     experience: [],
     education: [],
     skills: [],
+    projects: [],
+    certifications: [],
+    internships: [],
   };
   const { data } = await apiClient.post<Resume>("/api/resumes", {
     title,
@@ -39,7 +42,6 @@ export async function updateResume(
 export async function deleteResume(id: string): Promise<void> {
   await apiClient.delete(`/api/resumes/${id}`);
 }
-
 
 export interface ATSResult {
   resume_id: string;
@@ -84,17 +86,12 @@ export function streamRewrite(
       job_description: jobDescription,
     }),
   }).then(async (res) => {
-    if (!res.ok) {
-      onError("AI request failed");
-      return;
-    }
+    if (!res.ok) { onError("AI request failed"); return; }
     const reader = res.body!.getReader();
     const decoder = new TextDecoder();
-
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       const chunk = decoder.decode(value);
       const lines = chunk.split("\n");
       for (const line of lines) {
@@ -133,17 +130,12 @@ export function streamBullet(
       job_description: jobDescription,
     }),
   }).then(async (res) => {
-    if (!res.ok) {
-      onError("AI request failed");
-      return;
-    }
+    if (!res.ok) { onError("AI request failed"); return; }
     const reader = res.body!.getReader();
     const decoder = new TextDecoder();
-
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-
       const chunk = decoder.decode(value);
       const lines = chunk.split("\n");
       for (const line of lines) {
@@ -158,10 +150,8 @@ export function streamBullet(
   }).catch(() => onError("Connection failed"));
 }
 
-
 export async function downloadPDF(resumeId: string, title: string): Promise<void> {
   const token = localStorage.getItem("access_token");
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
   const res = await fetch(`${API_URL}/api/export/pdf/${resumeId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -177,7 +167,6 @@ export async function downloadPDF(resumeId: string, title: string): Promise<void
   a.click();
   URL.revokeObjectURL(url);
 }
-
 
 export interface MatchResult {
   job_id: string;
