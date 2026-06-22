@@ -11,8 +11,6 @@ export interface AuthResponse {
   user: User;
 }
 
-// add to bottom of src/types/auth.ts
-
 export interface Resume {
   id: string;
   user_id: string;
@@ -70,17 +68,77 @@ export interface ResumeContent {
   }[];
 }
 
-export type TemplateId = "classic" | "modern" | "minimal" | "bold";
+export type TemplateId =
+  | "classic"
+  | "modern"
+  | "minimal"
+  | "bold"
+  | "executive"
+  | "creative";
 
 export interface Template {
   id: TemplateId;
   name: string;
   description: string;
+  accent: string;       // hex for thumbnail
+  bg: string;           // hex for thumbnail bg
+  textColor: string;    // hex for thumbnail text
+  tag: string;          // e.g. "Popular", "ATS-safe"
 }
 
 export const TEMPLATES: Template[] = [
-  { id: "classic", name: "Classic", description: "Traditional layout, serif headings" },
-  { id: "modern", name: "Modern", description: "Clean lines, accent colors" },
-  { id: "minimal", name: "Minimal", description: "Ultra clean, maximum whitespace" },
-  { id: "bold", name: "Bold", description: "Strong headers, high contrast" },
+  {
+    id: "classic",
+    name: "Classic",
+    description: "Traditional serif layout. ATS-safe, universally accepted.",
+    accent: "#3E5C46",
+    bg: "#FBF8F1",
+    textColor: "#1F2620",
+    tag: "ATS-safe",
+  },
+  {
+    id: "modern",
+    name: "Modern",
+    description: "Left sidebar with accent bar. Clean and contemporary.",
+    accent: "#2563EB",
+    bg: "#F8FAFC",
+    textColor: "#0F172A",
+    tag: "Popular",
+  },
+  {
+    id: "minimal",
+    name: "Minimal",
+    description: "Maximum whitespace. Pure typography, zero decoration.",
+    accent: "#111827",
+    bg: "#FFFFFF",
+    textColor: "#111827",
+    tag: "Clean",
+  },
+  {
+    id: "bold",
+    name: "Bold",
+    description: "Dark header, strong contrast. Makes an impression.",
+    accent: "#F59E0B",
+    bg: "#111827",
+    textColor: "#F9FAFB",
+    tag: "Striking",
+  },
+  {
+    id: "executive",
+    name: "Executive",
+    description: "Double rule dividers, condensed type. Senior roles.",
+    accent: "#7C3AED",
+    bg: "#FAFAF9",
+    textColor: "#1C1917",
+    tag: "Senior",
+  },
+  {
+    id: "creative",
+    name: "Creative",
+    description: "Colored left panel, modern grid. Design & tech roles.",
+    accent: "#0D9488",
+    bg: "#F0FDFA",
+    textColor: "#134E4A",
+    tag: "Creative",
+  },
 ];

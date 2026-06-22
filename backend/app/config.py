@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     cors_origins: str = "http://localhost:5173"
     anthropic_api_key: str = ""
     openai_api_key: str = ""
+    stripe_secret_key: str = ""
+    stripe_webhook_secret: str = ""
+    stripe_pro_price_id: str = ""
+    frontend_url: str = "http://localhost:5173"
 
     class Config:
         env_file = ".env"

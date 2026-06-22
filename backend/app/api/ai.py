@@ -43,30 +43,32 @@ def rewrite_section(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    # ── Plan limit check ──────────────────────────────────────────────────────
+    if not current_user.can_use_ai():
+        limit = current_user.limits["ai_suggestions"]
+        raise HTTPException(
+            status_code=403,
+            detail=f"Free plan allows {limit} AI suggestions/month. Upgrade to Pro for unlimited.",
+        )
+
     resume = db.query(Resume).filter(
         Resume.id == payload.resume_id,
         Resume.user_id == current_user.id,
     ).first()
-
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")
-
     if not payload.current_text.strip():
         raise HTTPException(status_code=400, detail="No text to rewrite")
 
-    prompt = build_rewrite_prompt(
-        payload.section,
-        payload.current_text,
-        payload.job_description,
-    )
+    # Increment usage
+    current_user.increment_ai()
+    db.commit()
 
+    prompt = build_rewrite_prompt(payload.section, payload.current_text, payload.job_description)
     return StreamingResponse(
         event_stream(prompt),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
 
 
@@ -76,25 +78,28 @@ def rewrite_bullet(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    # ── Plan limit check ──────────────────────────────────────────────────────
+    if not current_user.can_use_ai():
+        limit = current_user.limits["ai_suggestions"]
+        raise HTTPException(
+            status_code=403,
+            detail=f"Free plan allows {limit} AI suggestions/month. Upgrade to Pro for unlimited.",
+        )
+
     resume = db.query(Resume).filter(
         Resume.id == payload.resume_id,
         Resume.user_id == current_user.id,
     ).first()
-
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")
 
-    prompt = build_bullet_prompt(
-        payload.bullet,
-        payload.role,
-        payload.job_description,
-    )
+    # Increment usage
+    current_user.increment_ai()
+    db.commit()
 
+    prompt = build_bullet_prompt(payload.bullet, payload.role, payload.job_description)
     return StreamingResponse(
         event_stream(prompt),
         media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",
-        },
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

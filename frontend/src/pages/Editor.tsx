@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getResume, updateResume, downloadPDF, updateTemplate } from "../api/resumes";
 import { ResumeContent } from "../types/auth";
 import TemplateSelector from "../components/TemplateSelector";
+import ResumePreview from "../components/ResumePreview";
 import { TemplateId } from "../types/auth";
 
 
@@ -263,9 +264,12 @@ export default function Editor() {
       {/* Template selector panel */}
       {showTemplates && (
         <div className="border-b border-ink/10 bg-white px-8 py-6">
-          <div className="max-w-lg">
+          <div className="max-w-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display text-lg text-ink">Choose a Template</h2>
+              <div>
+                <h2 className="font-display text-lg text-ink">Choose a Template</h2>
+                <p className="font-body text-xs text-ink/40 mt-0.5">Select a template to instantly update the live preview</p>
+              </div>
               <button
                 onClick={() => setShowTemplates(false)}
                 className="font-body text-sm text-ink/40 hover:text-ink"
@@ -490,133 +494,18 @@ export default function Editor() {
 
         {/* Live preview panel */}
         <div className="w-1/2 overflow-y-auto border-l border-ink/10 bg-white p-10">
-          <div className="max-w-[600px] mx-auto font-body text-ink">
-
-            {/* Contact */}
-            <div className="text-center mb-6 border-b border-ink/20 pb-6">
-              <h1 className="font-display text-3xl text-ink mb-1">{content.contact.name || "Your Name"}</h1>
-              <p className="text-sm text-ink/60">
-                {[content.contact.email, content.contact.phone, content.contact.location].filter(Boolean).join(" · ")}
-              </p>
-              {content.contact.linkedin && <p className="text-sm text-moss mt-1">{content.contact.linkedin}</p>}
-            </div>
-
-            {/* Summary */}
-            {content.summary && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-2">Summary</h2>
-                <p className="text-sm leading-relaxed">{content.summary}</p>
-              </div>
-            )}
-
-            {/* Experience */}
-            {content.experience.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Experience</h2>
-                <div className="space-y-4">
-                  {content.experience.map((exp) => (
-                    <div key={exp.id}>
-                      <div className="flex justify-between items-baseline">
-                        <p className="font-medium text-sm">{exp.role || "Role"}</p>
-                        <p className="text-xs text-ink/50">{exp.start}{exp.end ? ` — ${exp.end}` : ""}</p>
-                      </div>
-                      <p className="text-sm text-ink/60 mb-1">{exp.company || "Company"}</p>
-                      <ul className="list-disc list-inside space-y-0.5">
-                        {exp.bullets.filter(Boolean).map((b, i) => <li key={i} className="text-sm text-ink/80">{b}</li>)}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Internships */}
-            {content.internships.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Internships</h2>
-                <div className="space-y-4">
-                  {content.internships.map((intern) => (
-                    <div key={intern.id}>
-                      <div className="flex justify-between items-baseline">
-                        <p className="font-medium text-sm">{intern.role || "Role"}</p>
-                        <p className="text-xs text-ink/50">{intern.start}{intern.end ? ` — ${intern.end}` : ""}</p>
-                      </div>
-                      <p className="text-sm text-ink/60 mb-1">{intern.company || "Company"}</p>
-                      <ul className="list-disc list-inside space-y-0.5">
-                        {intern.bullets.filter(Boolean).map((b, i) => <li key={i} className="text-sm text-ink/80">{b}</li>)}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Education */}
-            {content.education.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Education</h2>
-                <div className="space-y-2">
-                  {content.education.map((edu) => (
-                    <div key={edu.id} className="flex justify-between">
-                      <div>
-                        <p className="text-sm font-medium">{edu.degree || "Degree"}</p>
-                        <p className="text-sm text-ink/60">{edu.school || "School"}</p>
-                      </div>
-                      <p className="text-xs text-ink/50">{edu.year}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Projects */}
-            {content.projects.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Projects</h2>
-                <div className="space-y-4">
-                  {content.projects.map((proj) => (
-                    <div key={proj.id}>
-                      <div className="flex justify-between items-baseline">
-                        <p className="font-medium text-sm">{proj.name || "Project Name"}</p>
-                        {proj.link && <a href={proj.link} className="text-xs text-moss hover:underline" target="_blank" rel="noreferrer">Link ↗</a>}
-                      </div>
-                      {proj.description && <p className="text-sm text-ink/70 mt-0.5">{proj.description}</p>}
-                      {proj.tech && <p className="text-xs text-ink/50 mt-0.5">{proj.tech}</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Certifications */}
-            {content.certifications.length > 0 && (
-              <div className="mb-6">
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Certifications</h2>
-                <div className="space-y-2">
-                  {content.certifications.map((cert) => (
-                    <div key={cert.id} className="flex justify-between">
-                      <div>
-                        <p className="text-sm font-medium">{cert.name || "Certification"}</p>
-                        <p className="text-sm text-ink/60">{cert.issuer}</p>
-                      </div>
-                      <p className="text-xs text-ink/50">{cert.year}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Skills */}
-            {content.skills.length > 0 && (
-              <div>
-                <h2 className="text-xs uppercase tracking-widest text-ink/40 mb-3">Skills</h2>
-                <div className="flex flex-wrap gap-2">
-                  {content.skills.map((skill, i) => (
-                    <span key={i} className="bg-paper text-ink/70 text-xs px-2 py-1 rounded-sm border border-ink/10">{skill}</span>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Template badge */}
+          <div className="flex items-center justify-between mb-6">
+            <span className="font-body text-xs text-ink/40 uppercase tracking-widest">Live Preview</span>
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="font-body text-xs text-moss border border-moss/30 px-2.5 py-1 rounded-sm hover:bg-moss/5 transition"
+            >
+              🎨 Change Template
+            </button>
+          </div>
+          <div className="max-w-[600px] mx-auto">
+            <ResumePreview content={content} template={template} />
           </div>
         </div>
       </div>
