@@ -206,7 +206,7 @@ export async function updateTemplate(
 export interface ResumeVersion {
   id: string;
   resume_id: string;
-  version_number: int;
+  version_number: number;
   content_snapshot: ResumeContent;
   created_at: string;
 }
