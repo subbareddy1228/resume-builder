@@ -4,6 +4,7 @@ import { getResume, updateResume, downloadPDF, updateTemplate } from "../api/res
 import { ResumeContent } from "../types/auth";
 import TemplateSelector from "../components/TemplateSelector";
 import ResumePreview from "../components/ResumePreview";
+import VersionHistory from "../components/VersionHistory";
 import { TemplateId } from "../types/auth";
 
 
@@ -34,6 +35,7 @@ export default function Editor() {
   const [content, setContent] = useState<ResumeContent>(EMPTY_CONTENT);
   const [template, setTemplate] = useState<TemplateId>("classic");
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showVersions, setShowVersions] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
@@ -113,7 +115,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, contact: { ...prev.contact, [field]: value } }));
   }
 
-  // Experience
   function addExperience() {
     setContent((prev) => ({
       ...prev,
@@ -133,7 +134,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, experience: prev.experience.filter((_, idx) => idx !== i) }));
   }
 
-  // Education
   function addEducation() {
     setContent((prev) => ({ ...prev, education: [...prev.education, { id: crypto.randomUUID(), school: "", degree: "", year: "" }] }));
   }
@@ -144,7 +144,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, education: prev.education.filter((_, idx) => idx !== i) }));
   }
 
-  // Skills
   function addSkill() {
     const trimmed = newSkill.trim();
     if (!trimmed) return;
@@ -156,7 +155,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, skills: prev.skills.filter((_, idx) => idx !== i) }));
   }
 
-  // Projects
   function addProject() {
     setContent((prev) => ({ ...prev, projects: [...prev.projects, { id: crypto.randomUUID(), name: "", description: "", tech: "", link: "" }] }));
   }
@@ -167,7 +165,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, projects: prev.projects.filter((_, idx) => idx !== i) }));
   }
 
-  // Certifications
   function addCertification() {
     setContent((prev) => ({ ...prev, certifications: [...prev.certifications, { id: crypto.randomUUID(), name: "", issuer: "", year: "" }] }));
   }
@@ -178,7 +175,6 @@ export default function Editor() {
     setContent((prev) => ({ ...prev, certifications: prev.certifications.filter((_, idx) => idx !== i) }));
   }
 
-  // Internships
   function addInternship() {
     setContent((prev) => ({ ...prev, internships: [...prev.internships, { id: crypto.randomUUID(), company: "", role: "", start: "", end: "", bullets: [""] }] }));
   }
@@ -212,7 +208,6 @@ export default function Editor() {
   return (
     <div className="min-h-screen bg-paper">
 
-      {/* Header */}
       <header className="border-b border-ink/10 px-8 py-3 flex items-center justify-between bg-white sticky top-0 z-10">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate("/dashboard")} className="font-body text-sm text-ink/50 hover:text-ink transition">
@@ -231,12 +226,18 @@ export default function Editor() {
           <button
             onClick={() => setShowTemplates(!showTemplates)}
             className={`bg-paper border font-body text-sm px-4 py-1.5 rounded-sm transition ${
-              showTemplates
-                ? "border-moss text-moss"
-                : "border-ink/20 text-ink hover:border-moss hover:text-moss"
+              showTemplates ? "border-moss text-moss" : "border-ink/20 text-ink hover:border-moss hover:text-moss"
             }`}
           >
             🎨 Templates
+          </button>
+          <button
+            onClick={() => setShowVersions(!showVersions)}
+            className={`bg-paper border font-body text-sm px-4 py-1.5 rounded-sm transition ${
+              showVersions ? "border-moss text-moss" : "border-ink/20 text-ink hover:border-moss hover:text-moss"
+            }`}
+          >
+            🕐 History
           </button>
           <button onClick={handleManualSave} disabled={saving}
             className="bg-paper border border-moss text-moss font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss hover:text-paper transition disabled:opacity-50">
@@ -261,7 +262,6 @@ export default function Editor() {
         </div>
       </header>
 
-      {/* Template selector panel */}
       {showTemplates && (
         <div className="border-b border-ink/10 bg-white px-8 py-6">
           <div className="max-w-2xl">
@@ -270,12 +270,7 @@ export default function Editor() {
                 <h2 className="font-display text-lg text-ink">Choose a Template</h2>
                 <p className="font-body text-xs text-ink/40 mt-0.5">Select a template to instantly update the live preview</p>
               </div>
-              <button
-                onClick={() => setShowTemplates(false)}
-                className="font-body text-sm text-ink/40 hover:text-ink"
-              >
-                ✕ Close
-              </button>
+              <button onClick={() => setShowTemplates(false)} className="font-body text-sm text-ink/40 hover:text-ink">✕ Close</button>
             </div>
             <TemplateSelector selected={template} onChange={handleTemplateChange} />
           </div>
@@ -283,11 +278,8 @@ export default function Editor() {
       )}
 
       <div className="flex h-[calc(100vh-57px)]">
-
-        {/* Editor panel */}
         <div className="w-1/2 overflow-y-auto p-8 space-y-10">
 
-          {/* Contact */}
           <section>
             <h2 className={sectionTitle}>Contact</h2>
             <div className="grid grid-cols-2 gap-3">
@@ -302,7 +294,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Summary */}
           <section>
             <h2 className={sectionTitle}>Summary</h2>
             <textarea className={`${inputCls} resize-none`} rows={4} value={content.summary}
@@ -310,7 +301,6 @@ export default function Editor() {
               placeholder="A brief professional summary..." />
           </section>
 
-          {/* Experience */}
           <section>
             <h2 className={sectionTitle}>Experience</h2>
             <div className="space-y-6">
@@ -341,7 +331,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Internships */}
           <section>
             <h2 className={sectionTitle}>Internships</h2>
             <div className="space-y-6">
@@ -372,7 +361,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Education */}
           <section>
             <h2 className={sectionTitle}>Education</h2>
             <div className="space-y-4">
@@ -395,7 +383,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Projects */}
           <section>
             <h2 className={sectionTitle}>Projects</h2>
             <div className="space-y-4">
@@ -424,7 +411,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Certifications */}
           <section>
             <h2 className={sectionTitle}>Certifications</h2>
             <div className="space-y-4">
@@ -457,7 +443,6 @@ export default function Editor() {
             </div>
           </section>
 
-          {/* Skills */}
           <section>
             <h2 className={sectionTitle}>Skills</h2>
             {content.skills.length > 0 && (
@@ -483,7 +468,6 @@ export default function Editor() {
             <p className="font-body text-xs text-ink/40 mt-1">Press Enter or click Add. You can also paste comma-separated skills.</p>
           </section>
 
-          {/* Bottom save button */}
           <div className="pt-4 pb-8">
             <button onClick={handleManualSave} disabled={saving}
               className="w-full bg-moss text-paper font-body text-sm font-medium py-3 rounded-sm hover:bg-moss/90 transition disabled:opacity-60">
@@ -492,9 +476,7 @@ export default function Editor() {
           </div>
         </div>
 
-        {/* Live preview panel */}
         <div className="w-1/2 overflow-y-auto border-l border-ink/10 bg-white p-10">
-          {/* Template badge */}
           <div className="flex items-center justify-between mb-6">
             <span className="font-body text-xs text-ink/40 uppercase tracking-widest">Live Preview</span>
             <button
@@ -509,6 +491,18 @@ export default function Editor() {
           </div>
         </div>
       </div>
+
+      {showVersions && id && (
+        <VersionHistory
+          resumeId={id}
+          onRestore={(restoredContent) => {
+            setContent(restoredContent);
+            setSaveMsg("Restored ✓");
+            setTimeout(() => setSaveMsg(""), 2000);
+          }}
+          onClose={() => setShowVersions(false)}
+        />
+      )}
     </div>
   );
 }

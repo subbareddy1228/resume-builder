@@ -145,3 +145,31 @@ def list_versions(
     if not resume:
         raise HTTPException(status_code=404, detail="Resume not found")
     return resume.versions
+
+
+@router.post("/{resume_id}/versions/{version_id}/restore", response_model=ResumeOut)
+def restore_version(
+    resume_id: uuid.UUID,
+    version_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    resume = db.query(Resume).filter(
+        Resume.id == resume_id, Resume.user_id == current_user.id
+    ).first()
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+
+    version = db.query(ResumeVersion).filter(
+        ResumeVersion.id == version_id,
+        ResumeVersion.resume_id == resume_id,
+    ).first()
+    if not version:
+        raise HTTPException(status_code=404, detail="Version not found")
+
+    # snapshot current before restoring
+    _snapshot(db, resume)
+    resume.content = version.content_snapshot
+    db.commit()
+    db.refresh(resume)
+    return resume

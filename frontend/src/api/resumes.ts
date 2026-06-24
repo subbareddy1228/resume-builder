@@ -201,3 +201,29 @@ export async function updateTemplate(
   });
   return data;
 }
+
+
+export interface ResumeVersion {
+  id: string;
+  resume_id: string;
+  version_number: int;
+  content_snapshot: ResumeContent;
+  created_at: string;
+}
+
+export async function listVersions(resumeId: string): Promise<ResumeVersion[]> {
+  const { data } = await apiClient.get<ResumeVersion[]>(
+    `/api/resumes/${resumeId}/versions`
+  );
+  return data;
+}
+
+export async function restoreVersion(
+  resumeId: string,
+  versionId: string
+): Promise<Resume> {
+  const { data } = await apiClient.post<Resume>(
+    `/api/resumes/${resumeId}/versions/${versionId}/restore`
+  );
+  return data;
+}
