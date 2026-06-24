@@ -1,6 +1,7 @@
 from app.config import settings
 
 
+
 def _get_client():
     import anthropic
     return anthropic.Anthropic(api_key=settings.anthropic_api_key)
@@ -61,3 +62,49 @@ def stream_suggestion(prompt: str):
     ) as stream:
         for text in stream.text_stream:
             yield text
+
+
+def build_cover_letter_prompt(
+    resume_content: dict, job_description: str, tone: str = "professional"
+) -> str:
+    contact = resume_content.get("contact", {})
+    name = contact.get("name", "the candidate")
+    summary = resume_content.get("summary", "")
+
+    exp_text = ""
+    for exp in resume_content.get("experience", []):
+        exp_text += f"- {exp.get('role', '')} at {exp.get('company', '')} ({exp.get('start', '')} - {exp.get('end', 'Present')})\n"
+        for b in exp.get("bullets", []):
+            if b:
+                exp_text += f"  • {b}\n"
+
+    skills = ", ".join(resume_content.get("skills", []))
+
+    tone_instructions = {
+        "professional": "Write in a formal, polished professional tone.",
+        "conversational": "Write in a warm, approachable tone that still sounds professional.",
+        "confident": "Write in a bold, assertive tone. Lead with achievements.",
+    }.get(tone, "Write in a professional tone.")
+
+    return f"""You are an expert cover letter writer. Write a compelling tailored cover letter.
+
+Tone: {tone_instructions}
+
+Candidate: {name}
+Summary: {summary}
+Experience:
+{exp_text}
+Skills: {skills}
+
+Job description:
+{job_description}
+
+Write a complete cover letter that:
+1. Opens with a strong hook referencing the specific role
+2. Highlights 2-3 most relevant experiences matching the job
+3. Shows genuine enthusiasm for the company/role
+4. Closes with a clear call to action
+5. Is 3-4 paragraphs, around 300-400 words
+6. Do NOT include date, address headers — start directly with the opening paragraph
+
+Return ONLY the cover letter text, nothing else."""

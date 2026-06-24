@@ -8,6 +8,7 @@ import { useAuth } from "./context/AuthContext";
 import ATS from "./pages/ATS";
 import AISuggest from "./pages/AISuggest";
 import JobMatch from "./pages/JobMatch";
+import CoverLetter from "./pages/CoverLetter";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { token } = useAuth();
@@ -59,6 +60,11 @@ export default function App() {
             <JobMatch />
           </RequireAuth>
         }
+      />
+
+      <Route
+        path="/cover-letter/:id"
+        element={<RequireAuth><CoverLetter /></RequireAuth>}
       />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

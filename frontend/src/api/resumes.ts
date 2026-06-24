@@ -227,3 +227,46 @@ export async function restoreVersion(
   );
   return data;
 }
+
+
+export function streamCoverLetter(
+  resumeId: string,
+  jobDescription: string,
+  tone: string,
+  onChunk: (text: string) => void,
+  onDone: () => void,
+  onError: (err: string) => void
+) {
+  const token = localStorage.getItem("access_token");
+
+  fetch(`${API_URL}/api/ai/cover-letter`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      resume_id: resumeId,
+      job_description: jobDescription,
+      tone,
+    }),
+  }).then(async (res) => {
+    if (!res.ok) { onError("Cover letter request failed"); return; }
+    const reader = res.body!.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      const lines = chunk.split("\n");
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.slice(6);
+          if (data === "[DONE]") { onDone(); return; }
+          if (data.startsWith("[ERROR]")) { onError(data); return; }
+          onChunk(data.replace(/\\n/g, "\n"));
+        }
+      }
+    }
+  }).catch(() => onError("Connection failed"));
+}
