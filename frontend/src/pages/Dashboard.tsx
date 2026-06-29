@@ -146,7 +146,7 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-8 py-12">
+      <main className="max-w-6xl mx-auto px-8 py-12">
 
         {/* Banners */}
         {upgradeSuccess && (
@@ -166,7 +166,7 @@ export default function Dashboard() {
           />
         )}
 
-        <div className="flex gap-8">
+        <div className="flex gap-8 items-start">
 
           {/* Left — resumes */}
           <div className="flex-1 min-w-0">
@@ -192,9 +192,9 @@ export default function Dashboard() {
             )}
 
             {/* Toolbar */}
-            <div className="flex items-center justify-between gap-4 mb-6">
+            <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
               <h1 className="font-display text-3xl text-ink shrink-0">My Resumes</h1>
-              <div className="flex items-center gap-3 flex-1 justify-end">
+              <div className="flex items-center gap-2 flex-wrap">
                 {resumes.length > 1 && (
                   <>
                     <input
@@ -283,7 +283,7 @@ export default function Dashboard() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                         <button
                           onClick={() => navigate(`/editor/${resume.id}`)}
                           className="font-body text-sm text-moss font-medium hover:underline"
@@ -345,7 +345,7 @@ export default function Dashboard() {
           </div>
 
           {/* Right — plan sidebar */}
-          <div className="w-56 shrink-0">
+          <div className="w-52 shrink-0 min-w-[200px]">
             <div className="bg-white border border-ink/10 rounded-sm p-5 sticky top-6 space-y-1">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-body text-sm font-medium text-ink">Your Plan</h2>
@@ -358,9 +358,9 @@ export default function Dashboard() {
 
               {billing ? (
                 <>
-                  <UsageBar label="Resumes"        used={resumeUsed}                    limit={billing.limits.resumes} />
-                  <UsageBar label="ATS Scans"      used={billing.usage.ats_scans}       limit={billing.limits.ats_scans} />
-                  <UsageBar label="AI Suggestions" used={billing.usage.ai_suggestions}  limit={billing.limits.ai_suggestions} />
+                  <UsageBar label="Resumes"        used={resumeUsed}                   limit={billing.limits.resumes} />
+                  <UsageBar label="ATS Scans"      used={billing.usage.ats_scans}      limit={billing.limits.ats_scans} />
+                  <UsageBar label="AI Suggestions" used={billing.usage.ai_suggestions} limit={billing.limits.ai_suggestions} />
                 </>
               ) : (
                 <p className="font-body text-xs text-ink/40">Usage data unavailable</p>
