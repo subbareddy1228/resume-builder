@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { scoreResume, ATSResult } from "../api/resumes";
+import { scoreResume, ATSResult, ChecklistItem } from "../api/resumes";
 
 function ScoreGauge({ score }: { score: number }) {
   const color =
@@ -12,41 +12,81 @@ function ScoreGauge({ score }: { score: number }) {
   return (
     <div className="flex flex-col items-center">
       <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r={radius} fill="none" stroke="#e5e0d8" strokeWidth="12" />
         <circle
           cx="70" cy="70" r={radius}
-          fill="none" stroke="#e5e0d8" strokeWidth="12"
-        />
-        <circle
-          cx="70" cy="70" r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth="12"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          transform="rotate(-90 70 70)"
+          fill="none" stroke={color} strokeWidth="12"
+          strokeDasharray={circumference} strokeDashoffset={offset}
+          strokeLinecap="round" transform="rotate(-90 70 70)"
           style={{ transition: "stroke-dashoffset 0.8s ease" }}
         />
-        <text
-          x="70" y="70"
-          textAnchor="middle" dominantBaseline="central"
-          fontSize="28" fontWeight="bold" fill={color}
-          fontFamily="Fraunces, serif"
-        >
+        <text x="70" y="70" textAnchor="middle" dominantBaseline="central"
+          fontSize="28" fontWeight="bold" fill={color} fontFamily="Fraunces, serif">
           {score}
         </text>
-        <text
-          x="70" y="95"
-          textAnchor="middle"
-          fontSize="11" fill="#9ca3af"
-          fontFamily="Inter, sans-serif"
-        >
+        <text x="70" y="95" textAnchor="middle" fontSize="11" fill="#9ca3af"
+          fontFamily="Inter, sans-serif">
           / 100
         </text>
       </svg>
       <p className="font-body text-sm font-medium mt-1" style={{ color }}>
         {score >= 70 ? "Strong match" : score >= 40 ? "Partial match" : "Weak match"}
       </p>
+    </div>
+  );
+}
+
+function ChecklistCard({ item }: { item: ChecklistItem }) {
+  const priorityConfig = {
+    high:   { dot: "bg-clay",        badge: "bg-clay/10 text-clay",        label: "High impact" },
+    medium: { dot: "bg-amber-500",   badge: "bg-amber-50 text-amber-700",  label: "Medium impact" },
+    low:    { dot: "bg-moss",        badge: "bg-moss/10 text-moss",        label: "Done" },
+  };
+  const cfg = priorityConfig[item.priority];
+
+  return (
+    <div className={`flex gap-4 p-4 rounded-sm border transition ${
+      item.done
+        ? "bg-moss/5 border-moss/20 opacity-75"
+        : "bg-white border-ink/10"
+    }`}>
+      {/* Checkbox */}
+      <div className="shrink-0 mt-0.5">
+        {item.done ? (
+          <div className="w-5 h-5 rounded-full bg-moss flex items-center justify-center">
+            <span className="text-paper text-xs font-bold">✓</span>
+          </div>
+        ) : (
+          <div className={`w-5 h-5 rounded-full border-2 ${
+            item.priority === "high" ? "border-clay" :
+            item.priority === "medium" ? "border-amber-500" : "border-moss"
+          }`} />
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <p className={`font-body text-sm font-medium ${item.done ? "line-through text-ink/40" : "text-ink"}`}>
+            {item.title}
+          </p>
+          {!item.done && (
+            <span className={`font-body text-xs px-2 py-0.5 rounded-full ${cfg.badge}`}>
+              {cfg.label}
+            </span>
+          )}
+        </div>
+        <p className="font-body text-xs text-ink/50">{item.detail}</p>
+      </div>
+
+      {/* Impact */}
+      {item.impact && !item.done && (
+        <div className="shrink-0 text-right">
+          <span className="font-body text-xs font-medium text-moss bg-moss/10 px-2 py-1 rounded-sm">
+            {item.impact}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -66,29 +106,31 @@ export default function ATS() {
     try {
       const res = await scoreResume(id, jdText);
       setResult(res);
-    } catch {
-      setError("Couldn't score the resume. Make sure it has content.");
+    } catch (e: any) {
+      setError(e?.response?.data?.detail || "Couldn't score the resume. Make sure it has content.");
     } finally {
       setLoading(false);
     }
   }
 
+  const pendingItems  = result?.checklist.filter((i) => !i.done) ?? [];
+  const doneItems     = result?.checklist.filter((i) => i.done)  ?? [];
+  const potentialGain = pendingItems
+    .map((i) => parseInt(i.impact) || 0)
+    .reduce((a, b) => a + b, 0);
+
   return (
     <div className="min-h-screen bg-paper">
       <header className="border-b border-ink/10 px-8 py-4 flex items-center gap-4 bg-white">
-        <button
-          onClick={() => navigate(`/editor/${id}`)}
-          className="font-body text-sm text-ink/50 hover:text-ink transition"
-        >
+        <button onClick={() => navigate(`/editor/${id}`)}
+          className="font-body text-sm text-ink/50 hover:text-ink transition">
           ← Back to Editor
         </button>
         <span className="font-display text-xl text-ink">ATS Score</span>
       </header>
 
       <main className="max-w-3xl mx-auto px-8 py-12">
-        <h1 className="font-display text-3xl text-ink mb-2">
-          Check ATS Score
-        </h1>
+        <h1 className="font-display text-3xl text-ink mb-2">Check ATS Score</h1>
         <p className="font-body text-sm text-ink/60 mb-8">
           Paste a job description below to see how well your resume matches it.
         </p>
@@ -97,16 +139,13 @@ export default function ATS() {
           Job Description
         </label>
         <textarea
-          rows={10}
-          value={jdText}
+          rows={10} value={jdText}
           onChange={(e) => setJdText(e.target.value)}
           className="w-full border border-ink/20 rounded-sm px-4 py-3 font-body text-sm focus:outline-none focus:ring-2 focus:ring-moss resize-none mb-4"
           placeholder="Paste the full job description here..."
         />
 
-        {error && (
-          <p className="font-body text-sm text-clay mb-4">{error}</p>
-        )}
+        {error && <p className="font-body text-sm text-clay mb-4">{error}</p>}
 
         <button
           onClick={handleScore}
@@ -118,6 +157,7 @@ export default function ATS() {
 
         {result && (
           <div className="space-y-8">
+
             {/* Score gauge */}
             <div className="bg-white border border-ink/10 rounded-sm p-8 flex flex-col items-center">
               <ScoreGauge score={result.score} />
@@ -126,18 +166,34 @@ export default function ATS() {
               </p>
             </div>
 
+            {/* Improvement Checklist */}
+            <div className="bg-white border border-ink/10 rounded-sm p-6">
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-display text-lg text-ink">Improvement Checklist</h2>
+                {potentialGain > 0 && (
+                  <span className="font-body text-xs text-moss bg-moss/10 border border-moss/20 px-3 py-1 rounded-full">
+                    Fix all → +{potentialGain} pts potential
+                  </span>
+                )}
+              </div>
+              <p className="font-body text-xs text-ink/50 mb-5">
+                {pendingItems.length} action{pendingItems.length !== 1 ? "s" : ""} to improve your score
+              </p>
+              <div className="space-y-3">
+                {result.checklist.map((item, i) => (
+                  <ChecklistCard key={i} item={item} />
+                ))}
+              </div>
+            </div>
+
             {/* Matched keywords */}
             {result.matched_keywords.length > 0 && (
               <div className="bg-white border border-ink/10 rounded-sm p-6">
-                <h2 className="font-display text-lg text-ink mb-4">
-                  Matched Keywords
-                </h2>
+                <h2 className="font-display text-lg text-ink mb-4">Matched Keywords</h2>
                 <div className="flex flex-wrap gap-2">
                   {result.matched_keywords.map((kw) => (
-                    <span
-                      key={kw}
-                      className="bg-moss/10 text-moss text-xs font-medium px-3 py-1 rounded-full border border-moss/20"
-                    >
+                    <span key={kw}
+                      className="bg-moss/10 text-moss text-xs font-medium px-3 py-1 rounded-full border border-moss/20">
                       ✓ {kw}
                     </span>
                   ))}
@@ -148,18 +204,14 @@ export default function ATS() {
             {/* Missing keywords */}
             {result.missing_keywords.length > 0 && (
               <div className="bg-white border border-ink/10 rounded-sm p-6">
-                <h2 className="font-display text-lg text-ink mb-1">
-                  Missing Keywords
-                </h2>
+                <h2 className="font-display text-lg text-ink mb-1">Missing Keywords</h2>
                 <p className="font-body text-sm text-ink/50 mb-4">
                   Add these to your resume to improve your match score.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {result.missing_keywords.map((kw) => (
-                    <span
-                      key={kw}
-                      className="bg-clay/10 text-clay text-xs font-medium px-3 py-1 rounded-full border border-clay/20"
-                    >
+                    <span key={kw}
+                      className="bg-clay/10 text-clay text-xs font-medium px-3 py-1 rounded-full border border-clay/20">
                       ✕ {kw}
                     </span>
                   ))}
@@ -167,12 +219,10 @@ export default function ATS() {
               </div>
             )}
 
-            {/* CTA back to editor */}
+            {/* CTA */}
             <div className="text-center">
-              <button
-                onClick={() => navigate(`/editor/${id}`)}
-                className="font-body text-sm text-moss font-medium hover:underline"
-              >
+              <button onClick={() => navigate(`/editor/${id}`)}
+                className="font-body text-sm text-moss font-medium hover:underline">
                 Go back to editor and improve your resume →
               </button>
             </div>

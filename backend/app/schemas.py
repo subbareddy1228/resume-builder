@@ -84,3 +84,11 @@ class ATSResult(BaseModel):
     matched_keywords: list[str]
     missing_keywords: list[str]
     total_keywords: int
+
+class ATSResult(BaseModel):
+    resume_id: uuid.UUID
+    score: int
+    matched_keywords: list[str]
+    missing_keywords: list[str]
+    total_keywords: int
+    checklist: list[dict] = []

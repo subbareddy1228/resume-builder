@@ -9,6 +9,9 @@ import ATS from "./pages/ATS";
 import AISuggest from "./pages/AISuggest";
 import JobMatch from "./pages/JobMatch";
 import CoverLetter from "./pages/CoverLetter";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { token } = useAuth();
@@ -66,6 +69,9 @@ export default function App() {
         path="/cover-letter/:id"
         element={<RequireAuth><CoverLetter /></RequireAuth>}
       />
+      
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password"  element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

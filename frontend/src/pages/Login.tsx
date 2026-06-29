@@ -79,6 +79,16 @@ export default function Login() {
           </button>
         </form>
 
+        <div className="text-center mt-3">
+          <button
+            type="button"
+            onClick={() => navigate("/forgot-password")}
+            className="font-body text-xs text-ink/40 hover:text-moss transition"
+          >
+            Forgot password?
+          </button>
+        </div>
+
         <p className="text-center font-body text-sm text-ink/60 mt-6">
           New here?{" "}
           <Link to="/register" className="text-moss font-medium">

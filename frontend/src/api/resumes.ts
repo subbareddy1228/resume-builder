@@ -270,3 +270,21 @@ export function streamCoverLetter(
     }
   }).catch(() => onError("Connection failed"));
 }
+
+
+export interface ChecklistItem {
+  priority: "high" | "medium" | "low";
+  done: boolean;
+  title: string;
+  detail: string;
+  impact: string;
+}
+
+export interface ATSResult {
+  resume_id: string;
+  score: number;
+  matched_keywords: string[];
+  missing_keywords: string[];
+  total_keywords: number;
+  checklist: ChecklistItem[];
+}

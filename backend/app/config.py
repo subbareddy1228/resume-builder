@@ -1,7 +1,10 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(env_file=".env", extra="ignore")
+
     database_url: str
     secret_key: str
     algorithm: str = "HS256"
@@ -13,9 +16,8 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_pro_price_id: str = ""
     frontend_url: str = "http://localhost:5173"
-
-    class Config:
-        env_file = ".env"
+    resend_api_key: str = ""
+    resend_from_email: str = "noreply@yourdomain.com"
 
     @property
     def cors_origin_list(self) -> list[str]:

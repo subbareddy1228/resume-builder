@@ -265,6 +265,12 @@ export default function Editor() {
             className="bg-moss text-paper font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss/90 transition">
             ✦ AI Suggestions
           </button>
+
+          <button onClick={() => navigate(`/cover-letter/${id}`)}
+            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-moss hover:text-moss transition">
+            ✉ Cover Letter
+          </button>
+          
         </div>
       </header>
 
