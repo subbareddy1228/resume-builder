@@ -30,7 +30,7 @@ class UserOut(BaseModel):
 
 class Token(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    token_type: str
     user: UserOut
 
 
@@ -77,13 +77,6 @@ class ATSRequest(BaseModel):
     resume_id: uuid.UUID
     jd_text: str
 
-
-class ATSResult(BaseModel):
-    resume_id: uuid.UUID
-    score: int
-    matched_keywords: list[str]
-    missing_keywords: list[str]
-    total_keywords: int
 
 class ATSResult(BaseModel):
     resume_id: uuid.UUID
