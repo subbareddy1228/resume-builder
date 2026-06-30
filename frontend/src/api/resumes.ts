@@ -288,3 +288,15 @@ export interface ATSResult {
   total_keywords: number;
   checklist: ChecklistItem[];
 }
+
+export interface ATSHistoryItem {
+  id: string;
+  score: number;
+  jd_snippet: string | null;
+  created_at: string;
+}
+
+export async function getATSHistory(resumeId: string): Promise<ATSHistoryItem[]> {
+  const { data } = await apiClient.get<ATSHistoryItem[]>(`/api/ats/history/${resumeId}`);
+  return data;
+}

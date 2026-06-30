@@ -149,3 +149,28 @@ class PasswordResetToken(Base):
     expires_at = Column(DateTime, nullable=False)
     used       = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+class ATSScoreHistory(Base):
+    __tablename__ = "ats_score_history"
+
+    id         = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    resume_id  = Column(UUID(as_uuid=True), ForeignKey("resumes.id"), nullable=False)
+    user_id    = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    score      = Column(Integer, nullable=False)
+    jd_snippet = Column(String, nullable=True)  # first ~80 chars of JD for context
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class JobApplication(Base):
+    __tablename__ = "job_applications"
+
+    id          = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id     = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    resume_id   = Column(UUID(as_uuid=True), ForeignKey("resumes.id"), nullable=True)
+    company     = Column(String, nullable=False)
+    role        = Column(String, nullable=False)
+    status      = Column(String, nullable=False, default="applied")  # applied | interview | offer | rejected
+    job_url     = Column(String, nullable=True)
+    notes       = Column(Text, nullable=True)
+    applied_date = Column(DateTime, default=datetime.utcnow)
+    created_at  = Column(DateTime, default=datetime.utcnow)
+    updated_at  = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

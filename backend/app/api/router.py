@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, applications
 from app.api import auth, resumes, ats, ai, export, jobs, billing, import_resume, photos
 
 api_router = APIRouter()
@@ -11,3 +11,4 @@ api_router.include_router(jobs.router)
 api_router.include_router(billing.router)
 api_router.include_router(import_resume.router)
 api_router.include_router(photos.router)
+api_router.include_router(applications.router)

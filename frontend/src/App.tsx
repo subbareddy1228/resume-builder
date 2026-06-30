@@ -11,7 +11,8 @@ import JobMatch from "./pages/JobMatch";
 import CoverLetter from "./pages/CoverLetter";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-
+import ProfilePage from "./pages/Profile";
+import Applications from "./pages/Applications";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { token } = useAuth();
@@ -73,6 +74,15 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password"  element={<ResetPassword />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route
+        path="/profile"
+        element={<RequireAuth><ProfilePage /></RequireAuth>}
+      />
+      <Route
+        path="/applications"
+        element={<RequireAuth><Applications /></RequireAuth>}
+      />
     </Routes>
+    
   );
 }

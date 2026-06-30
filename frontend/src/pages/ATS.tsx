@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { scoreResume, ATSResult, ChecklistItem } from "../api/resumes";
+import { useEffect } from "react";
+import { getATSHistory, ATSHistoryItem } from "../api/resumes";
+import ATSHistoryChart from "../components/ATSHistoryChart";
 
 function ScoreGauge({ score }: { score: number }) {
   const color =
@@ -98,6 +101,12 @@ export default function ATS() {
   const [result, setResult] = useState<ATSResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<ATSHistoryItem[]>([]);
+
+  useEffect(() => {
+    if (!id) return;
+    getATSHistory(id).then(setHistory).catch(() => {});
+  }, [id]);
 
   async function handleScore() {
     if (!id || !jdText.trim()) return;

@@ -25,3 +25,12 @@ export async function uploadPhoto(resumeId: string, file: File): Promise<{ photo
 export async function deletePhoto(resumeId: string): Promise<void> {
   await apiClient.delete(`/api/photos/${resumeId}`);
 }
+
+export async function importLinkedInText(text: string): Promise<Resume> {
+  const { data } = await apiClient.post<Resume>(
+    "/api/import/linkedin-text",
+    { text },
+    { timeout: 60000 }
+  );
+  return data;
+}

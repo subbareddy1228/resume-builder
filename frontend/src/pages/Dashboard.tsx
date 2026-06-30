@@ -7,6 +7,7 @@ import { Resume } from "../types/auth";
 import UsageBar from "../components/UsageBar";
 import UpgradeBanner from "../components/UpgradeBanner";
 import ImportDropzone from "../components/ImportDropzone";
+import LinkedInImportModal from "../components/LinkedInImportModal";
 
 type SortKey = "updated" | "created" | "name";
 
@@ -26,6 +27,7 @@ export default function Dashboard() {
   const [sort, setSort]                   = useState<SortKey>("updated");
   const [exportingId, setExportingId]     = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [showLinkedInImport, setShowLinkedInImport] = useState(false);
 
   const upgradeSuccess   = searchParams.get("upgrade") === "success";
   const upgradeCancelled = searchParams.get("upgrade") === "cancelled";
@@ -142,6 +144,18 @@ export default function Dashboard() {
             {user?.full_name || user?.email}
           </span>
           <button
+            onClick={() => navigate("/profile")}
+            className="font-body text-sm text-ink/60 hover:text-ink transition"
+          >
+            Profile
+          </button>
+          <button
+            onClick={() => navigate("/applications")}
+            className="font-body text-sm text-ink/60 hover:text-ink transition"
+          >
+            Applications
+          </button>
+          <button
             onClick={() => { logout(); navigate("/login"); }}
             className="btn-danger-ghost"
           >
@@ -242,6 +256,12 @@ export default function Dashboard() {
                   className="btn-primary whitespace-nowrap"
                 >
                   {creating ? "Creating..." : atLimit ? `Limit (${resumeLimit})` : "+ New Resume"}
+                </button>
+                <button
+                  onClick={() => setShowLinkedInImport(true)}
+                  className="border border-ink/20 text-ink font-body text-sm px-4 py-2 rounded-sm hover:border-moss hover:text-moss transition whitespace-nowrap"
+                >
+                Import LinkedIn
                 </button>
               </div>
             </div>

@@ -11,6 +11,13 @@ from app.schemas import UserCreate, UserLogin, Token, UserOut
 from app.security import hash_password, verify_password, create_access_token
 from app.config import settings
 
+from app.schemas import (
+    UserCreate, UserLogin, Token, UserOut,
+    UpdateProfileRequest, ChangePasswordRequest, ProfileOut,
+)
+from app.api.deps import get_current_user
+from app.models import Resume
+
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
@@ -138,3 +145,51 @@ def reset_password(payload: dict, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Password reset successfully. You can now log in."}
+
+@router.get("/me", response_model=ProfileOut)
+def get_profile(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    resume_count = db.query(Resume).filter(Resume.user_id == current_user.id).count()
+    return ProfileOut(
+        id=current_user.id,
+        email=current_user.email,
+        full_name=current_user.full_name,
+        plan=current_user.plan,
+        created_at=current_user.created_at,
+        resume_count=resume_count,
+        ats_scans_used=current_user.usage["ats_scans"],
+        ats_scans_limit=current_user.limits["ats_scans"],
+        ai_suggestions_used=current_user.usage["ai_suggestions"],
+        ai_suggestions_limit=current_user.limits["ai_suggestions"],
+    )
+
+
+@router.put("/me", response_model=UserOut)
+def update_profile(
+    payload: UpdateProfileRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if payload.full_name is not None:
+        current_user.full_name = payload.full_name
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+
+@router.post("/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if not verify_password(payload.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    if len(payload.new_password) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters")
+
+    current_user.hashed_password = hash_password(payload.new_password)
+    db.commit()
+    return {"message": "Password changed successfully"}

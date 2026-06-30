@@ -1,11 +1,11 @@
-import io
 import json
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from app.database import get_db
-from app.models import Resume, User
+from app.models import Resume, ResumeVersion, User
 from app.schemas import ResumeOut
 from app.api.deps import get_current_user
 from app.services.import_resume import extract_text_from_file, parse_resume_with_claude
@@ -16,13 +16,7 @@ ALLOWED_EXTENSIONS = {"pdf", "docx"}
 MAX_FILE_SIZE_MB = 8
 
 
-@router.post("/resume", response_model=ResumeOut)
-async def import_resume(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    # ── Plan limit check (counts as creating a resume) ─────────────────────
+def _check_resume_limit(db: Session, current_user: User) -> None:
     current_count = db.query(Resume).filter(Resume.user_id == current_user.id).count()
     if not current_user.can_create_resume(current_count):
         limit = current_user.limits["resumes"]
@@ -30,6 +24,37 @@ async def import_resume(
             status_code=403,
             detail=f"Free plan allows {limit} resumes. Upgrade to Pro for unlimited resumes.",
         )
+
+
+def _save_resume(db: Session, current_user: User, title: str, content: dict) -> Resume:
+    resume = Resume(
+        user_id=current_user.id,
+        title=title,
+        template="classic",
+        content=content,
+    )
+    db.add(resume)
+    db.flush()
+
+    db.add(ResumeVersion(
+        resume_id=resume.id,
+        version_number=1,
+        content_snapshot=resume.content,
+    ))
+
+    db.commit()
+    db.refresh(resume)
+    return resume
+
+
+@router.post("/resume", response_model=ResumeOut)
+async def import_resume(
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # ── Plan limit check (counts as creating a resume) ─────────────────────
+    _check_resume_limit(db, current_user)
 
     # ── Validate file ────────────────────────────────────────────────────
     filename = file.filename or ""
@@ -62,22 +87,32 @@ async def import_resume(
 
     title = content.get("contact", {}).get("name") or filename.rsplit(".", 1)[0] or "Imported Resume"
 
-    resume = Resume(
-        user_id=current_user.id,
-        title=f"{title} (Imported)",
-        template="classic",
-        content=content,
-    )
-    db.add(resume)
-    db.flush()
+    return _save_resume(db, current_user, f"{title} (Imported)", content)
 
-    from app.models import ResumeVersion
-    db.add(ResumeVersion(
-        resume_id=resume.id,
-        version_number=1,
-        content_snapshot=resume.content,
-    ))
 
-    db.commit()
-    db.refresh(resume)
-    return resume
+class LinkedInTextRequest(BaseModel):
+    text: str
+
+
+@router.post("/linkedin-text", response_model=ResumeOut)
+async def import_linkedin_text(
+    payload: LinkedInTextRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    _check_resume_limit(db, current_user)
+
+    text = payload.text.strip()
+    if len(text) < 50:
+        raise HTTPException(status_code=400, detail="Paste your full LinkedIn profile text — that looks too short.")
+
+    try:
+        content = parse_resume_with_claude(text)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=502, detail="Couldn't parse the profile content. Please try again.")
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"AI parsing failed: {str(e)}")
+
+    title = content.get("contact", {}).get("name") or "LinkedIn Import"
+
+    return _save_resume(db, current_user, f"{title} (LinkedIn)", content)
