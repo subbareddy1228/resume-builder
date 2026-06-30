@@ -1,5 +1,5 @@
-from fastapi import APIRouter, applications
-from app.api import auth, resumes, ats, ai, export, jobs, billing, import_resume, photos
+from fastapi import APIRouter
+from app.api import auth, resumes, ats, ai, export, jobs, billing, import_resume, photos, applications
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
