@@ -12,7 +12,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "classic") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden" style={{ background: t.bg, fontFamily: "Georgia, serif" }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden" style={{ background: t.bg, fontFamily: "Georgia, serif" }}>
         {/* Header: centered name + thin rule */}
         <div className="flex flex-col items-center pt-2 pb-1 px-2">
           <div style={{ width: "55%", height: 5, background: t.textColor, opacity: 0.85, borderRadius: 1, marginBottom: 2 }} />
@@ -35,7 +35,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "modern") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden flex" style={{ background: t.bg }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden flex" style={{ background: t.bg }}>
         {/* Left accent bar */}
         <div style={{ width: 28, background: t.accent, flexShrink: 0, padding: "6px 4px", display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ width: "100%", height: 3, background: "rgba(255,255,255,0.8)", borderRadius: 1 }} />
@@ -58,7 +58,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "minimal") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden" style={{ background: t.bg, border: "1px solid #E5E7EB" }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden" style={{ background: t.bg, border: "1px solid #E5E7EB" }}>
         <div className="p-3 space-y-1.5">
           <div style={{ width: "50%", height: 5, background: t.textColor, opacity: 0.9, borderRadius: 1 }} />
           <div style={{ width: "35%", height: 2, background: t.textColor, opacity: 0.3, borderRadius: 1 }} />
@@ -74,7 +74,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "bold") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden" style={{ background: t.bg }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden" style={{ background: t.bg }}>
         {/* Dark header block */}
         <div style={{ background: "#1F2937", padding: "8px 10px" }}>
           <div style={{ width: "55%", height: 5, background: t.accent, borderRadius: 1, marginBottom: 3 }} />
@@ -93,7 +93,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "executive") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden" style={{ background: t.bg }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden" style={{ background: t.bg }}>
         <div className="p-2">
           {/* Double rule header */}
           <div style={{ width: "100%", height: 2, background: t.accent, marginBottom: 1, borderRadius: 1 }} />
@@ -114,7 +114,7 @@ function TemplateThumbnail({ t }: { t: Template }) {
 
   if (t.id === "creative") {
     return (
-      <div className="w-full h-24 rounded overflow-hidden flex" style={{ background: "#fff" }}>
+      <div className="w-full h-24 rounded-lg overflow-hidden flex" style={{ background: "#fff" }}>
         {/* Colored left panel */}
         <div style={{ width: 32, background: t.accent, flexShrink: 0, padding: "6px 5px", display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
           {/* Avatar circle */}
@@ -153,7 +153,7 @@ export default function TemplateSelector({ selected, onChange }: Props) {
           <button
             key={t.id}
             onClick={() => onChange(t.id)}
-            className={`text-left rounded-md overflow-hidden transition-all ${
+            className={`text-left rounded-xl overflow-hidden transition-all ${
               isActive
                 ? "ring-2 ring-offset-2 ring-moss shadow-md scale-[1.02]"
                 : "ring-1 ring-ink/10 hover:ring-moss/40 hover:shadow-sm hover:scale-[1.01]"

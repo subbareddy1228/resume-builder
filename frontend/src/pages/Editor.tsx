@@ -194,95 +194,74 @@ export default function Editor() {
   if (loading) {
     return (
       <div className="min-h-screen bg-paper flex items-center justify-center">
-        <p className="font-body text-ink/40">Loading...</p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-moss/20 border-t-moss rounded-full animate-spin" />
+          <p className="font-body text-sm text-ink/40">Loading your resume...</p>
+        </div>
       </div>
     );
   }
 
-  const inputCls = "w-full border border-ink/20 rounded-sm px-3 py-1.5 font-body text-sm focus:outline-none focus:ring-2 focus:ring-moss bg-white";
-  const labelCls = "block font-body text-xs uppercase tracking-wide text-ink/50 mb-1";
-  const sectionTitle = "font-display text-lg text-ink mb-4 pb-2 border-b border-ink/10";
-  const addBtnCls = "font-body text-sm text-moss border border-moss/30 rounded-sm px-4 py-2 hover:bg-moss/5 transition";
-  const cardCls = "bg-white border border-ink/10 rounded-sm p-4";
+  const sectionTitle = "font-display text-lg text-ink";
+  const addBtnCls = "font-body text-sm text-moss border border-moss/25 rounded-lg px-4 py-2 hover:bg-moss/5 hover:border-moss/40 transition-all";
+  const cardCls = "bg-paper/50 border border-ink/[0.07] rounded-xl p-4";
+  const navBtnCls = "bg-white border border-ink/12 text-ink/75 font-body text-sm px-3.5 py-1.5 rounded-lg hover:border-moss/40 hover:text-moss transition-all";
+  const navBtnActiveCls = "bg-moss/10 border border-moss text-moss font-body text-sm px-3.5 py-1.5 rounded-lg transition-all";
 
   return (
     <div className="min-h-screen bg-paper">
 
-      <header className="border-b border-ink/10 px-8 py-3 flex items-center justify-between bg-white sticky top-0 z-10">
+      <header className="border-b border-ink/[0.06] px-8 py-3 flex items-center justify-between bg-white/90 backdrop-blur sticky top-0 z-10">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate("/dashboard")} className="font-body text-sm text-ink/50 hover:text-ink transition">
+          <button onClick={() => navigate("/dashboard")} className="btn-ghost">
             ← Dashboard
           </button>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="font-display text-lg text-ink border-none outline-none bg-transparent w-64"
+            className="font-display text-lg text-ink border-none outline-none bg-transparent w-64 focus:bg-ink/[0.03] rounded-md px-2 -mx-2 transition-colors"
           />
         </div>
-        <div className="flex items-center gap-3">
-          <span className="font-body text-xs text-ink/40">
+        <div className="flex items-center gap-2.5 flex-wrap justify-end">
+          <span className="font-body text-xs text-ink/40 mr-1">
             {saving ? "Saving..." : saveMsg || "Auto-saved"}
           </span>
-          <button
-            onClick={() => setShowTemplates(!showTemplates)}
-            className={`bg-paper border font-body text-sm px-4 py-1.5 rounded-sm transition ${
-              showTemplates ? "border-moss text-moss" : "border-ink/20 text-ink hover:border-moss hover:text-moss"
-            }`}
-          >
+          <button onClick={() => setShowTemplates(!showTemplates)} className={showTemplates ? navBtnActiveCls : navBtnCls}>
             🎨 Templates
           </button>
-          <button
-            onClick={() => setShowVersions(!showVersions)}
-            className={`bg-paper border font-body text-sm px-4 py-1.5 rounded-sm transition ${
-              showVersions ? "border-moss text-moss" : "border-ink/20 text-ink hover:border-moss hover:text-moss"
-            }`}
-          >
+          <button onClick={() => setShowVersions(!showVersions)} className={showVersions ? navBtnActiveCls : navBtnCls}>
             🕐 History
           </button>
-          <button onClick={handleManualSave} disabled={saving}
-            className="bg-paper border border-moss text-moss font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss hover:text-paper transition disabled:opacity-50">
+          <button onClick={handleManualSave} disabled={saving} className="btn-secondary !py-1.5 !px-3.5 !text-sm">
             {saving ? "Saving..." : "Save"}
           </button>
-          <button onClick={handleExport} disabled={exporting}
-            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-ink/40 transition disabled:opacity-50">
+          <button onClick={handleExport} disabled={exporting} className={navBtnCls + " disabled:opacity-50"}>
             {exporting ? "Exporting..." : "↓ PDF"}
           </button>
-          <button onClick={() => navigate(`/ats/${id}`)}
-            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-moss hover:text-moss transition">
+          <button onClick={() => navigate(`/ats/${id}`)} className={navBtnCls}>
             ATS Score
           </button>
-          <button onClick={() => navigate(`/jobs/${id}`)}
-            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-moss hover:text-moss transition">
+          <button onClick={() => navigate(`/jobs/${id}`)} className={navBtnCls}>
             Job Match
           </button>
-          <button
-            onClick={() => navigate(`/cover-letter/${id}`)}
-            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-moss hover:text-moss transition"
-          >
+          <button onClick={() => navigate(`/cover-letter/${id}`)} className={navBtnCls}>
             ✉ Cover Letter
           </button>
-          <button onClick={() => navigate(`/ai/${id}`)}
-            className="bg-moss text-paper font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss/90 transition">
+          <button onClick={() => navigate(`/ai/${id}`)} className="btn-primary !py-1.5 !px-3.5 !text-sm whitespace-nowrap">
             ✦ AI Suggestions
           </button>
-
-          <button onClick={() => navigate(`/cover-letter/${id}`)}
-            className="bg-paper border border-ink/20 text-ink font-body text-sm px-4 py-1.5 rounded-sm hover:border-moss hover:text-moss transition">
-            ✉ Cover Letter
-          </button>
-          
         </div>
       </header>
 
       {showTemplates && (
-        <div className="border-b border-ink/10 bg-white px-8 py-6">
+        <div className="border-b border-ink/[0.06] bg-white px-8 py-6 shadow-sm">
           <div className="max-w-2xl">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="font-display text-lg text-ink">Choose a Template</h2>
                 <p className="font-body text-xs text-ink/40 mt-0.5">Select a template to instantly update the live preview</p>
               </div>
-              <button onClick={() => setShowTemplates(false)} className="font-body text-sm text-ink/40 hover:text-ink">✕ Close</button>
+              <button onClick={() => setShowTemplates(false)} className="btn-ghost">✕ Close</button>
             </div>
             <TemplateSelector selected={template} onChange={handleTemplateChange} />
           </div>
@@ -293,12 +272,12 @@ export default function Editor() {
         <div className="w-1/2 overflow-y-auto p-8 space-y-10">
 
           <section>
-            <h2 className={sectionTitle}>Contact</h2>
+            <div className="heading-rule"><h2 className={sectionTitle}>Contact</h2></div>
             <div className="grid grid-cols-2 gap-3">
               {(["name", "email", "phone", "location", "linkedin"] as const).map((f) => (
                 <div key={f} className={f === "name" ? "col-span-2" : ""}>
-                  <label className={labelCls}>{f}</label>
-                  <input className={inputCls} value={content.contact[f]}
+                  <label className="field-label">{f}</label>
+                  <input className="field-input" value={content.contact[f]}
                     onChange={(e) => setContact(f, e.target.value)}
                     placeholder={f.charAt(0).toUpperCase() + f.slice(1)} />
                 </div>
@@ -307,35 +286,35 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Summary</h2>
-            <textarea className={`${inputCls} resize-none`} rows={4} value={content.summary}
+            <div className="heading-rule"><h2 className={sectionTitle}>Summary</h2></div>
+            <textarea className="field-textarea" rows={4} value={content.summary}
               onChange={(e) => setContent((prev) => ({ ...prev, summary: e.target.value }))}
               placeholder="A brief professional summary..." />
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Experience</h2>
-            <div className="space-y-6">
+            <div className="heading-rule"><h2 className={sectionTitle}>Experience</h2></div>
+            <div className="space-y-4">
               {content.experience.map((exp, i) => (
                 <div key={exp.id} className={cardCls}>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     {(["company", "role", "start", "end"] as const).map((f) => (
                       <div key={f}>
-                        <label className={labelCls}>{f}</label>
-                        <input className={inputCls} value={exp[f]}
+                        <label className="field-label">{f}</label>
+                        <input className="field-input" value={exp[f]}
                           onChange={(e) => updateExperience(i, f, e.target.value)}
                           placeholder={f.charAt(0).toUpperCase() + f.slice(1)} />
                       </div>
                     ))}
                   </div>
-                  <label className={labelCls}>Bullets</label>
+                  <label className="field-label">Bullets</label>
                   {exp.bullets.map((b, bi) => (
-                    <input key={bi} className={`${inputCls} mb-2`} value={b}
+                    <input key={bi} className="field-input mb-2" value={b}
                       onChange={(e) => updateBullet(i, bi, e.target.value)} placeholder="Achieved..." />
                   ))}
-                  <div className="flex gap-3 mt-2">
-                    <button onClick={() => addBullet(i)} className="font-body text-xs text-moss hover:underline">+ Add bullet</button>
-                    <button onClick={() => removeExperience(i)} className="font-body text-xs text-clay hover:underline">Remove</button>
+                  <div className="flex gap-4 mt-2">
+                    <button onClick={() => addBullet(i)} className="font-body text-xs text-moss font-medium hover:underline">+ Add bullet</button>
+                    <button onClick={() => removeExperience(i)} className="font-body text-xs text-clay font-medium hover:underline">Remove</button>
                   </div>
                 </div>
               ))}
@@ -344,28 +323,28 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Internships</h2>
-            <div className="space-y-6">
+            <div className="heading-rule"><h2 className={sectionTitle}>Internships</h2></div>
+            <div className="space-y-4">
               {content.internships.map((intern, i) => (
                 <div key={intern.id} className={cardCls}>
                   <div className="grid grid-cols-2 gap-3 mb-3">
                     {(["company", "role", "start", "end"] as const).map((f) => (
                       <div key={f}>
-                        <label className={labelCls}>{f}</label>
-                        <input className={inputCls} value={intern[f]}
+                        <label className="field-label">{f}</label>
+                        <input className="field-input" value={intern[f]}
                           onChange={(e) => updateInternship(i, f, e.target.value)}
                           placeholder={f.charAt(0).toUpperCase() + f.slice(1)} />
                       </div>
                     ))}
                   </div>
-                  <label className={labelCls}>Bullets</label>
+                  <label className="field-label">Bullets</label>
                   {intern.bullets.map((b, bi) => (
-                    <input key={bi} className={`${inputCls} mb-2`} value={b}
+                    <input key={bi} className="field-input mb-2" value={b}
                       onChange={(e) => updateInternshipBullet(i, bi, e.target.value)} placeholder="Achieved..." />
                   ))}
-                  <div className="flex gap-3 mt-2">
-                    <button onClick={() => addInternshipBullet(i)} className="font-body text-xs text-moss hover:underline">+ Add bullet</button>
-                    <button onClick={() => removeInternship(i)} className="font-body text-xs text-clay hover:underline">Remove</button>
+                  <div className="flex gap-4 mt-2">
+                    <button onClick={() => addInternshipBullet(i)} className="font-body text-xs text-moss font-medium hover:underline">+ Add bullet</button>
+                    <button onClick={() => removeInternship(i)} className="font-body text-xs text-clay font-medium hover:underline">Remove</button>
                   </div>
                 </div>
               ))}
@@ -374,21 +353,21 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Education</h2>
+            <div className="heading-rule"><h2 className={sectionTitle}>Education</h2></div>
             <div className="space-y-4">
               {content.education.map((edu, i) => (
                 <div key={edu.id} className={cardCls}>
                   <div className="grid grid-cols-2 gap-3">
                     {(["school", "degree", "year"] as const).map((f) => (
                       <div key={f} className={f === "school" ? "col-span-2" : ""}>
-                        <label className={labelCls}>{f}</label>
-                        <input className={inputCls} value={edu[f]}
+                        <label className="field-label">{f}</label>
+                        <input className="field-input" value={edu[f]}
                           onChange={(e) => updateEducation(i, f, e.target.value)}
                           placeholder={f.charAt(0).toUpperCase() + f.slice(1)} />
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => removeEducation(i)} className="font-body text-xs text-clay hover:underline mt-3">Remove</button>
+                  <button onClick={() => removeEducation(i)} className="font-body text-xs text-clay font-medium hover:underline mt-3">Remove</button>
                 </div>
               ))}
               <button onClick={addEducation} className={addBtnCls}>+ Add Education</button>
@@ -396,27 +375,27 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Projects</h2>
+            <div className="heading-rule"><h2 className={sectionTitle}>Projects</h2></div>
             <div className="space-y-4">
               {content.projects.map((proj, i) => (
                 <div key={proj.id} className={cardCls}>
                   <div className="space-y-2">
                     {(["name", "description", "tech", "link"] as const).map((f) => (
                       <div key={f}>
-                        <label className={labelCls}>{f === "tech" ? "Technologies" : f === "link" ? "Project Link" : f}</label>
+                        <label className="field-label">{f === "tech" ? "Technologies" : f === "link" ? "Project Link" : f}</label>
                         {f === "description" ? (
-                          <textarea className={`${inputCls} resize-none`} rows={2} value={proj[f]}
+                          <textarea className="field-textarea" rows={2} value={proj[f]}
                             onChange={(e) => updateProject(i, f, e.target.value)}
                             placeholder="Brief project description..." />
                         ) : (
-                          <input className={inputCls} value={proj[f]}
+                          <input className="field-input" value={proj[f]}
                             onChange={(e) => updateProject(i, f, e.target.value)}
                             placeholder={f === "tech" ? "React, Node.js, PostgreSQL..." : f === "link" ? "https://github.com/..." : f.charAt(0).toUpperCase() + f.slice(1)} />
                         )}
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => removeProject(i)} className="font-body text-xs text-clay hover:underline mt-3">Remove</button>
+                  <button onClick={() => removeProject(i)} className="font-body text-xs text-clay font-medium hover:underline mt-3">Remove</button>
                 </div>
               ))}
               <button onClick={addProject} className={addBtnCls}>+ Add Project</button>
@@ -424,31 +403,31 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Certifications</h2>
+            <div className="heading-rule"><h2 className={sectionTitle}>Certifications</h2></div>
             <div className="space-y-4">
               {content.certifications.map((cert, i) => (
                 <div key={cert.id} className={cardCls}>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2">
-                      <label className={labelCls}>Certification Name</label>
-                      <input className={inputCls} value={cert.name}
+                      <label className="field-label">Certification Name</label>
+                      <input className="field-input" value={cert.name}
                         onChange={(e) => updateCertification(i, "name", e.target.value)}
                         placeholder="AWS Solutions Architect..." />
                     </div>
                     <div>
-                      <label className={labelCls}>Issuer</label>
-                      <input className={inputCls} value={cert.issuer}
+                      <label className="field-label">Issuer</label>
+                      <input className="field-input" value={cert.issuer}
                         onChange={(e) => updateCertification(i, "issuer", e.target.value)}
                         placeholder="Amazon, Google, Microsoft..." />
                     </div>
                     <div>
-                      <label className={labelCls}>Year</label>
-                      <input className={inputCls} value={cert.year}
+                      <label className="field-label">Year</label>
+                      <input className="field-input" value={cert.year}
                         onChange={(e) => updateCertification(i, "year", e.target.value)}
                         placeholder="2024" />
                     </div>
                   </div>
-                  <button onClick={() => removeCertification(i)} className="font-body text-xs text-clay hover:underline mt-3">Remove</button>
+                  <button onClick={() => removeCertification(i)} className="font-body text-xs text-clay font-medium hover:underline mt-3">Remove</button>
                 </div>
               ))}
               <button onClick={addCertification} className={addBtnCls}>+ Add Certification</button>
@@ -456,49 +435,44 @@ export default function Editor() {
           </section>
 
           <section>
-            <h2 className={sectionTitle}>Skills</h2>
+            <div className="heading-rule"><h2 className={sectionTitle}>Skills</h2></div>
             {content.skills.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {content.skills.map((skill, i) => (
-                  <span key={i} className="flex items-center gap-1 bg-moss/10 text-moss text-xs font-medium px-3 py-1 rounded-full border border-moss/20">
+                  <span key={i} className="flex items-center gap-1 bg-moss/10 text-moss text-xs font-medium px-3 py-1.5 rounded-full border border-moss/20">
                     {skill}
-                    <button onClick={() => removeSkill(i)} className="ml-1 text-moss/60 hover:text-clay transition font-bold leading-none">×</button>
+                    <button onClick={() => removeSkill(i)} className="ml-1 text-moss/60 hover:text-clay transition-colors font-bold leading-none">×</button>
                   </span>
                 ))}
               </div>
             )}
             <div className="flex gap-2">
-              <input className={inputCls} value={newSkill}
+              <input className="field-input" value={newSkill}
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addSkill()}
                 placeholder="Type a skill and press Add or Enter..." />
-              <button onClick={addSkill} disabled={!newSkill.trim()}
-                className="bg-moss text-paper font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss/90 transition disabled:opacity-50 whitespace-nowrap">
+              <button onClick={addSkill} disabled={!newSkill.trim()} className="btn-primary whitespace-nowrap">
                 + Add
               </button>
             </div>
-            <p className="font-body text-xs text-ink/40 mt-1">Press Enter or click Add. You can also paste comma-separated skills.</p>
+            <p className="font-body text-xs text-ink/40 mt-1.5">Press Enter or click Add. You can also paste comma-separated skills.</p>
           </section>
 
           <div className="pt-4 pb-8">
-            <button onClick={handleManualSave} disabled={saving}
-              className="w-full bg-moss text-paper font-body text-sm font-medium py-3 rounded-sm hover:bg-moss/90 transition disabled:opacity-60">
+            <button onClick={handleManualSave} disabled={saving} className="btn-primary w-full !py-3">
               {saving ? "Saving..." : saveMsg || "Save Resume"}
             </button>
           </div>
         </div>
 
-        <div className="w-1/2 overflow-y-auto border-l border-ink/10 bg-white p-10">
+        <div className="w-1/2 overflow-y-auto border-l border-ink/[0.06] bg-gradient-to-b from-white to-paper/30 p-10">
           <div className="flex items-center justify-between mb-6">
-            <span className="font-body text-xs text-ink/40 uppercase tracking-widest">Live Preview</span>
-            <button
-              onClick={() => setShowTemplates(true)}
-              className="font-body text-xs text-moss border border-moss/30 px-2.5 py-1 rounded-sm hover:bg-moss/5 transition"
-            >
+            <span className="font-body text-xs text-ink/40 uppercase tracking-widest font-semibold">Live Preview</span>
+            <button onClick={() => setShowTemplates(true)} className="font-body text-xs text-moss border border-moss/25 px-3 py-1.5 rounded-lg hover:bg-moss/5 transition-colors">
               🎨 Change Template
             </button>
           </div>
-          <div className="max-w-[600px] mx-auto">
+          <div className="max-w-[600px] mx-auto rounded-lg overflow-hidden shadow-[0_2px_8px_rgba(31,38,32,0.06),0_16px_40px_-16px_rgba(31,38,32,0.18)]">
             <ResumePreview content={content} template={template} />
           </div>
         </div>

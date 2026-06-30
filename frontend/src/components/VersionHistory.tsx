@@ -49,20 +49,20 @@ export default function VersionHistory({ resumeId, onRestore, onClose }: Props) 
   return (
     <div className="fixed inset-0 z-50 flex">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-ink/30" onClick={onClose} />
+      <div className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]" onClick={onClose} />
 
       {/* Panel */}
-      <div className="relative ml-auto w-96 h-full bg-white border-l border-ink/10 flex flex-col shadow-xl">
+      <div className="relative ml-auto w-96 h-full bg-white border-l border-ink/[0.08] flex flex-col shadow-2xl">
 
         {/* Header */}
-        <div className="px-6 py-4 border-b border-ink/10 flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-ink/[0.07] flex items-center justify-between">
           <div>
             <h2 className="font-display text-lg text-ink">Version History</h2>
             <p className="font-body text-xs text-ink/40 mt-0.5">
               {versions.length} version{versions.length !== 1 ? "s" : ""} saved
             </p>
           </div>
-          <button onClick={onClose} className="text-ink/40 hover:text-ink text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-ink/40 hover:text-ink text-xl leading-none transition-colors w-7 h-7 flex items-center justify-center rounded-full hover:bg-ink/5">×</button>
         </div>
 
         {/* Version list */}
@@ -72,23 +72,23 @@ export default function VersionHistory({ resumeId, onRestore, onClose }: Props) 
           ) : versions.length === 0 ? (
             <p className="font-body text-sm text-ink/40 p-6">No versions saved yet. Start editing to create versions.</p>
           ) : (
-            <div className="divide-y divide-ink/5">
+            <div className="divide-y divide-ink/[0.05]">
               {versions.map((v, i) => (
                 <div
                   key={v.id}
-                  className={`px-6 py-4 hover:bg-paper transition cursor-pointer ${
-                    previewing?.id === v.id ? "bg-moss/5 border-l-2 border-moss" : ""
+                  className={`px-6 py-4 hover:bg-paper/60 transition-colors cursor-pointer ${
+                    previewing?.id === v.id ? "bg-moss/[0.04] border-l-2 border-moss" : ""
                   }`}
                   onClick={() => setPreviewing(previewing?.id === v.id ? null : v)}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-body text-xs font-medium text-moss bg-moss/10 px-2 py-0.5 rounded-full">
+                        <span className="pill-moss">
                           v{v.version_number}
                         </span>
                         {i === 0 && (
-                          <span className="font-body text-xs text-ink/40 bg-ink/5 px-2 py-0.5 rounded-full">
+                          <span className="pill-neutral">
                             Latest
                           </span>
                         )}
@@ -99,7 +99,7 @@ export default function VersionHistory({ resumeId, onRestore, onClose }: Props) 
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRestore(v); }}
                       disabled={restoring === v.id || i === 0}
-                      className="shrink-0 font-body text-xs text-moss border border-moss/30 px-3 py-1 rounded-sm hover:bg-moss/5 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="shrink-0 font-body text-xs text-moss border border-moss/25 px-3 py-1.5 rounded-lg hover:bg-moss/5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       {restoring === v.id ? "..." : i === 0 ? "Current" : "Restore"}
                     </button>
@@ -107,8 +107,8 @@ export default function VersionHistory({ resumeId, onRestore, onClose }: Props) 
 
                   {/* Preview snippet */}
                   {previewing?.id === v.id && (
-                    <div className="mt-3 bg-paper rounded-sm p-3 border border-ink/10">
-                      <p className="font-body text-xs font-medium text-ink mb-1">Preview</p>
+                    <div className="mt-3 bg-paper rounded-lg p-3.5 border border-ink/[0.07]">
+                      <p className="font-body text-xs font-semibold text-ink mb-1">Preview</p>
                       {v.content_snapshot?.summary ? (
                         <p className="font-body text-xs text-ink/60 line-clamp-3">
                           {v.content_snapshot.summary}
@@ -130,7 +130,7 @@ export default function VersionHistory({ resumeId, onRestore, onClose }: Props) 
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-ink/10">
+        <div className="px-6 py-4 border-t border-ink/[0.07]">
           <p className="font-body text-xs text-ink/40 text-center">
             Versions are saved automatically on every edit
           </p>

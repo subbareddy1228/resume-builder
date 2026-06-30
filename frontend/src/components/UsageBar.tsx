@@ -13,18 +13,20 @@ export default function UsageBar({ label, used, limit }: Props) {
   const full  = pct >= 100 && !isPro;
 
   return (
-    <div className="mb-3">
-      <div className="flex justify-between mb-1">
+    <div className="mb-3.5">
+      <div className="flex justify-between mb-1.5">
         <span className="font-body text-xs text-ink/60">{label}</span>
-        <span className={`font-body text-xs font-medium ${full ? "text-clay" : near ? "text-amber-600" : "text-ink/50"}`}>
+        <span className={`font-body text-xs font-semibold ${full ? "text-clay" : near ? "text-amber-600" : "text-ink/45"}`}>
           {isPro ? "Unlimited" : `${used} / ${limit}`}
         </span>
       </div>
       {!isPro && (
-        <div className="h-1.5 bg-ink/10 rounded-full overflow-hidden">
+        <div className="h-2 bg-ink/[0.06] rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${full ? "bg-clay" : near ? "bg-amber-500" : "bg-moss"}`}
-            style={{ width: `${pct}%` }}
+            className={`h-full rounded-full transition-all duration-300 ${
+              full ? "bg-clay" : near ? "bg-amber-500" : "bg-gradient-to-r from-moss to-[#52755D]"
+            }`}
+            style={{ width: `${Math.max(pct, 3)}%` }}
           />
         </div>
       )}

@@ -59,11 +59,8 @@ export default function CoverLetter() {
 
   return (
     <div className="min-h-screen bg-paper">
-      <header className="border-b border-ink/10 px-8 py-4 flex items-center gap-4 bg-white sticky top-0 z-10">
-        <button
-          onClick={() => navigate(`/editor/${id}`)}
-          className="font-body text-sm text-ink/50 hover:text-ink transition"
-        >
+      <header className="border-b border-ink/[0.06] px-8 py-4 flex items-center gap-4 bg-white/80 backdrop-blur sticky top-0 z-10">
+        <button onClick={() => navigate(`/editor/${id}`)} className="btn-ghost">
           ← Back to Editor
         </button>
         <span className="font-display text-xl text-ink">Cover Letter</span>
@@ -73,9 +70,9 @@ export default function CoverLetter() {
       </header>
 
       <main className="max-w-5xl mx-auto px-8 py-12">
-        <div className="mb-8">
+        <div className="mb-8 heading-rule inline-block">
           <h1 className="font-display text-3xl text-ink mb-2">Generate Cover Letter</h1>
-          <p className="font-body text-sm text-ink/60">
+          <p className="font-body text-sm text-ink/55 max-w-md">
             Claude writes a tailored cover letter using your resume and the job description.
           </p>
         </div>
@@ -86,21 +83,19 @@ export default function CoverLetter() {
           <div className="space-y-6">
 
             <div>
-              <label className="block font-body text-xs uppercase tracking-wide text-ink/50 mb-3">
-                Tone
-              </label>
+              <label className="field-label !mb-3">Tone</label>
               <div className="grid grid-cols-3 gap-2">
                 {TONES.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setTone(t.id)}
-                    className={`text-left border rounded-sm p-3 transition ${
+                    className={`text-left rounded-xl p-3.5 transition-all duration-150 ${
                       tone === t.id
-                        ? "border-moss bg-moss/5 ring-1 ring-moss"
-                        : "border-ink/15 hover:border-moss/40 bg-white"
+                        ? "border-2 border-moss bg-moss/[0.06] shadow-sm"
+                        : "border border-ink/10 hover:border-moss/40 bg-white hover:shadow-sm"
                     }`}
                   >
-                    <p className={`font-body text-sm font-medium ${
+                    <p className={`font-body text-sm font-semibold ${
                       tone === t.id ? "text-moss" : "text-ink"
                     }`}>
                       {t.label}
@@ -112,25 +107,21 @@ export default function CoverLetter() {
             </div>
 
             <div>
-              <label className="block font-body text-xs uppercase tracking-wide text-ink/50 mb-2">
-                Job Description
-              </label>
+              <label className="field-label">Job Description</label>
               <textarea
                 rows={14}
                 value={jd}
                 onChange={(e) => setJd(e.target.value)}
-                className="w-full border border-ink/20 rounded-sm px-3 py-2 font-body text-sm focus:outline-none focus:ring-2 focus:ring-moss resize-none"
+                className="field-textarea"
                 placeholder="Paste the full job description here..."
               />
             </div>
 
-            {error && <p className="font-body text-sm text-clay">{error}</p>}
+            {error && (
+              <p className="font-body text-sm text-clay bg-clay/5 border border-clay/15 rounded-lg px-3 py-2">{error}</p>
+            )}
 
-            <button
-              onClick={handleGenerate}
-              disabled={streaming || !jd.trim()}
-              className="w-full bg-moss text-paper font-body text-sm font-medium py-3 rounded-sm hover:bg-moss/90 transition disabled:opacity-60"
-            >
+            <button onClick={handleGenerate} disabled={streaming || !jd.trim()} className="btn-primary w-full">
               {streaming ? "Writing..." : "✦ Generate Cover Letter"}
             </button>
           </div>
@@ -138,20 +129,20 @@ export default function CoverLetter() {
           {/* Right — output */}
           <div className="flex flex-col">
             <div className="flex items-center justify-between mb-3">
-              <label className="font-body text-xs uppercase tracking-wide text-ink/50">
-                Cover Letter {streaming && <span className="text-moss ml-1">●</span>}
+              <label className="field-label !mb-0 flex items-center gap-1.5">
+                Cover Letter {streaming && <span className="text-moss">●</span>}
               </label>
               {letter && !streaming && (
                 <div className="flex gap-2">
                   <button
                     onClick={handleCopy}
-                    className="font-body text-xs text-moss border border-moss/30 px-3 py-1 rounded-sm hover:bg-moss/5 transition"
+                    className="font-body text-xs text-moss border border-moss/25 px-3 py-1.5 rounded-lg hover:bg-moss/5 transition-colors"
                   >
                     {copied ? "✓ Copied" : "Copy"}
                   </button>
                   <button
                     onClick={handleDownload}
-                    className="font-body text-xs text-ink/60 border border-ink/20 px-3 py-1 rounded-sm hover:border-ink/40 transition"
+                    className="font-body text-xs text-ink/60 border border-ink/15 px-3 py-1.5 rounded-lg hover:border-ink/30 transition-colors"
                   >
                     ↓ Download
                   </button>
@@ -159,8 +150,8 @@ export default function CoverLetter() {
               )}
             </div>
 
-            <div className={`flex-1 min-h-[460px] border rounded-sm p-5 font-body text-sm leading-relaxed whitespace-pre-wrap ${
-              letter ? "bg-white border-ink/15 text-ink" : "bg-white border-ink/10 text-ink/30"
+            <div className={`flex-1 min-h-[460px] rounded-xl p-5 font-body text-sm leading-relaxed whitespace-pre-wrap ${
+              letter ? "surface-card text-ink" : "border border-dashed border-ink/15 bg-white/60 text-ink/30"
             }`}>
               {letter || (streaming ? "" : "Your cover letter will appear here...")}
               {streaming && <span className="animate-pulse text-moss">▋</span>}

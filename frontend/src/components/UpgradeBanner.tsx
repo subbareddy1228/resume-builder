@@ -22,18 +22,17 @@ export default function UpgradeBanner({ message, onClose }: Props) {
   }
 
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-sm px-4 py-3 flex items-center justify-between gap-4 mb-6">
-      <p className="font-body text-sm text-amber-800">{message}</p>
+    <div className="bg-gradient-to-r from-clay/10 to-amber-50 border border-clay/25 rounded-xl px-5 py-4 flex items-center justify-between gap-4 mb-6 shadow-sm">
+      <div className="flex items-center gap-3">
+        <span className="text-clay text-lg">✦</span>
+        <p className="font-body text-sm text-ink/80">{message}</p>
+      </div>
       <div className="flex items-center gap-3 shrink-0">
-        <button
-          onClick={handleUpgrade}
-          disabled={loading}
-          className="bg-moss text-paper font-body text-sm px-4 py-1.5 rounded-sm hover:bg-moss/90 transition disabled:opacity-60 whitespace-nowrap"
-        >
+        <button onClick={handleUpgrade} disabled={loading} className="btn-primary whitespace-nowrap !py-2">
           {loading ? "Loading..." : "Upgrade to Pro"}
         </button>
         {onClose && (
-          <button onClick={onClose} className="text-amber-500 hover:text-amber-700 text-lg leading-none">×</button>
+          <button onClick={onClose} className="text-clay/60 hover:text-clay text-lg leading-none transition-colors">×</button>
         )}
       </div>
     </div>
