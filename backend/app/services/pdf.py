@@ -1,3 +1,25 @@
+def _photo_data_uri(photo_url: str | None) -> str | None:
+    """Convert a stored /api/photos/{id}/file path into a base64 data URI
+    WeasyPrint can render without needing network access."""
+    if not photo_url:
+        return None
+    try:
+        import base64
+        from pathlib import Path
+
+        resume_id = photo_url.rstrip("/").split("/")[-2]  # /api/photos/{id}/file
+        upload_dir = Path(__file__).resolve().parent.parent.parent / "uploads" / "photos"
+        for ext in ("jpg", "jpeg", "png", "webp"):
+            filepath = upload_dir / f"{resume_id}.{ext}"
+            if filepath.exists():
+                mime = "image/png" if ext == "png" else "image/webp" if ext == "webp" else "image/jpeg"
+                data = base64.b64encode(filepath.read_bytes()).decode("ascii")
+                return f"data:{mime};base64,{data}"
+    except Exception:
+        pass
+    return None
+
+
 def resume_to_html(content: dict, title: str, template: str = "classic") -> str:
     contact = content.get("contact", {})
     summary = content.get("summary", "")
@@ -328,6 +350,7 @@ def resume_to_html(content: dict, title: str, template: str = "classic") -> str:
         body { font-family: 'Inter', 'Helvetica Neue', sans-serif; font-size: 10pt; color: #134E4A; background: white; padding: 0; line-height: 1.5; display: flex; min-height: 100vh; }
         .sidebar { width: 185px; min-height: 100vh; background: #0D9488; color: white; padding: 28px 14px; flex-shrink: 0; }
         .avatar { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-size: 20pt; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 14px; }
+        .avatar-img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); margin-bottom: 14px; display: block; }
         .sidebar .name { font-size: 13pt; font-weight: 700; color: white; margin-bottom: 12px; line-height: 1.2; }
         .sidebar .contact-item { font-size: 8pt; color: rgba(255,255,255,0.8); margin-bottom: 4px; word-break: break-all; }
         .sidebar .side-title { font-size: 7.5pt; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.55); margin: 18px 0 7px; font-weight: 700; }
@@ -370,6 +393,12 @@ def resume_to_html(content: dict, title: str, template: str = "classic") -> str:
             for c in certifications
         )
         initial = (contact.get("name", "?") or "?")[0].upper()
+        photo_uri = _photo_data_uri(content.get("photo_url"))
+        avatar_html = (
+            f'<img class="avatar-img" src="{photo_uri}" />'
+            if photo_uri
+            else f'<div class="avatar">{initial}</div>'
+        )
 
         return (
             "<!DOCTYPE html><html><head>"
@@ -377,7 +406,7 @@ def resume_to_html(content: dict, title: str, template: str = "classic") -> str:
             f"<style>{css}</style>"
             "</head><body>"
             '<div class="sidebar">'
-            f'<div class="avatar">{initial}</div>'
+            f'{avatar_html}'
             f'<div class="name">{name}</div>'
             + (f'<div class="contact-item">{safe(contact.get("email",""))}</div>' if contact.get("email") else "")
             + (f'<div class="contact-item">{safe(contact.get("phone",""))}</div>' if contact.get("phone") else "")

@@ -29,6 +29,7 @@ export interface ResumeContent {
     location: string;
     linkedin: string;
   };
+  photo_url?: string;
   summary: string;
   experience: {
     id: string;

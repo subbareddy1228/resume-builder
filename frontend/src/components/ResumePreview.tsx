@@ -451,9 +451,17 @@ function CreativePreview({ content }: { content: ResumeContent }) {
       {/* Left panel */}
       <div style={{ width: 170, background: accent, color: "#fff", padding: "24px 14px", flexShrink: 0, display: "flex", flexDirection: "column", gap: 0 }}>
         {/* Avatar circle */}
-        <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.2)", border: "2px solid rgba(255,255,255,0.5)", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, color: "rgba(255,255,255,0.7)" }}>
-          {(c.contact.name || "?")[0].toUpperCase()}
-        </div>
+        {c.photo_url ? (
+          <img
+            src={c.photo_url.startsWith("http") ? c.photo_url : `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${c.photo_url}`}
+            alt=""
+            style={{ width: 52, height: 52, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,255,255,0.5)", marginBottom: 14 }}
+          />
+        ) : (
+          <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.2)", border: "2px solid rgba(255,255,255,0.5)", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, color: "rgba(255,255,255,0.7)" }}>
+            {(c.contact.name || "?")[0].toUpperCase()}
+          </div>
+        )}
         <h1 style={{ fontSize: 14, fontWeight: 700, margin: "0 0 2px", lineHeight: 1.2 }}>
           {c.contact.name || "Your Name"}
         </h1>

@@ -5,6 +5,7 @@ import { ResumeContent } from "../types/auth";
 import TemplateSelector from "../components/TemplateSelector";
 import ResumePreview from "../components/ResumePreview";
 import VersionHistory from "../components/VersionHistory";
+import PhotoUpload from "../components/PhotoUpload";
 import { TemplateId } from "../types/auth";
 
 
@@ -273,6 +274,13 @@ export default function Editor() {
 
           <section>
             <div className="heading-rule"><h2 className={sectionTitle}>Contact</h2></div>
+            {id && (
+              <PhotoUpload
+                resumeId={id}
+                photoUrl={content.photo_url}
+                onChange={(url) => setContent((prev) => ({ ...prev, photo_url: url }))}
+              />
+            )}
             <div className="grid grid-cols-2 gap-3">
               {(["name", "email", "phone", "location", "linkedin"] as const).map((f) => (
                 <div key={f} className={f === "name" ? "col-span-2" : ""}>

@@ -6,6 +6,7 @@ import { getBillingStatus, createCheckout, createPortal, BillingStatus } from ".
 import { Resume } from "../types/auth";
 import UsageBar from "../components/UsageBar";
 import UpgradeBanner from "../components/UpgradeBanner";
+import ImportDropzone from "../components/ImportDropzone";
 
 type SortKey = "updated" | "created" | "name";
 
@@ -203,6 +204,11 @@ export default function Dashboard() {
                 </div>
               </div>
             )}
+
+            {/* Import existing resume */}
+            <div className="mb-6">
+              <ImportDropzone onError={(msg) => setError(msg)} />
+            </div>
 
             {/* Toolbar */}
             <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
