@@ -427,6 +427,10 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      {showLinkedInImport && (
+        <LinkedInImportModal onClose={() => setShowLinkedInImport(false)} />
+      )}
     </div>
   );
 }
