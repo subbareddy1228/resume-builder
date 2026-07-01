@@ -35,6 +35,7 @@ def on_startup():
         with engine.connect() as conn:
             conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS oauth_provider VARCHAR;"))
             conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS oauth_id VARCHAR;"))
+            conn.execute(text("ALTER TABLE users ALTER COLUMN hashed_password DROP NOT NULL;"))
             conn.commit()
     except Exception as e:
         print(f"WARNING: Column migration skipped: {e}")
