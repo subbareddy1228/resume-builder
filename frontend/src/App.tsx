@@ -13,6 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ProfilePage from "./pages/Profile";
 import Applications from "./pages/Applications";
+import OAuthCallback from "./pages/OAuthCallback";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { token } = useAuth();
@@ -73,6 +74,7 @@ export default function App() {
       
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password"  element={<ResetPassword />} />
+      <Route path="/oauth/callback"  element={<OAuthCallback />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
       <Route
         path="/profile"

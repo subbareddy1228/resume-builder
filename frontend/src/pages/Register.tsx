@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
+import OAuthButtons from "../components/OAuthButtons";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -45,6 +46,7 @@ export default function Register() {
         </div>
 
         <form onSubmit={handleSubmit} className="surface-card p-8">
+          <OAuthButtons />
           <label className="field-label">Full name</label>
           <input
             type="text"

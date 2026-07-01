@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
+import OAuthButtons from "../components/OAuthButtons";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -44,6 +45,8 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="surface-card p-8">
+          <OAuthButtons />
+
           <label className="field-label">Email</label>
           <input
             type="email"
