@@ -30,6 +30,15 @@ def on_startup():
     except (NotSupportedError, ProgrammingError):
         print("WARNING: pgvector not available locally. Job matching disabled.")
 
+    # Auto-migrate missing columns
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS oauth_provider VARCHAR;"))
+            conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS oauth_id VARCHAR;"))
+            conn.commit()
+    except Exception as e:
+        print(f"WARNING: Column migration skipped: {e}")
+
     try:
         Base.metadata.create_all(bind=engine)
     except ProgrammingError as e:

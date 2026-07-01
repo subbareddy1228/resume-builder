@@ -54,6 +54,10 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # OAuth
+    oauth_provider   = Column(String, nullable=True)   
+    oauth_id         = Column(String, nullable=True)  
+
     resumes          = relationship("Resume", back_populates="owner", cascade="all, delete-orphan")
     job_descriptions = relationship("JobDescription", back_populates="owner", cascade="all, delete-orphan")
 
