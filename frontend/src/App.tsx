@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -24,6 +25,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
@@ -75,7 +77,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password"  element={<ResetPassword />} />
       <Route path="/oauth/callback"  element={<OAuthCallback />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
       <Route
         path="/profile"
         element={<RequireAuth><ProfilePage /></RequireAuth>}
