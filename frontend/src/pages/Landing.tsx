@@ -145,24 +145,21 @@ export default function Landing() {
             <span className="font-display text-xl text-ink">Resume Builder</span>
           </div>
 
-          {/* Nav links — now scroll to sections */}
+          {/* Nav links */}
           <div className="hidden md:flex items-center gap-8">
-            <button
-              onClick={() => scrollTo("features")}
-              className="font-body text-sm text-ink/55 hover:text-ink transition-colors"
-            >
+            <button onClick={() => scrollTo("features")} className="font-body text-sm text-ink/55 hover:text-ink transition-colors">
               Features
             </button>
-            <button
-              onClick={() => scrollTo("how-it-works")}
-              className="font-body text-sm text-ink/55 hover:text-ink transition-colors"
-            >
+            <button onClick={() => scrollTo("templates")} className="font-body text-sm text-ink/55 hover:text-ink transition-colors">
+              Templates
+            </button>
+            <button onClick={() => scrollTo("how-it-works")} className="font-body text-sm text-ink/55 hover:text-ink transition-colors">
               How it works
             </button>
-            <button
-              onClick={() => scrollTo("pricing")}
-              className="font-body text-sm text-ink/55 hover:text-ink transition-colors"
-            >
+            <button onClick={() => scrollTo("about")} className="font-body text-sm text-ink/55 hover:text-ink transition-colors">
+              About
+            </button>
+            <button onClick={() => scrollTo("pricing")} className="font-body text-sm text-ink/55 hover:text-ink transition-colors">
               Pricing
             </button>
           </div>
@@ -264,6 +261,200 @@ export default function Landing() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Templates ────────────────────────────────────────── */}
+      <section id="templates" className="max-w-6xl mx-auto px-6 py-20 scroll-mt-16">
+        <div className="text-center mb-14">
+          <p className="font-body text-xs uppercase tracking-[0.2em] text-moss font-semibold mb-3">Templates</p>
+          <h2 className="font-display text-4xl text-ink mb-4">15 designs. One that's yours.</h2>
+          <p className="font-body text-base text-ink/50 max-w-xl mx-auto">
+            Every template is ATS-compatible and exports as a pixel-perfect PDF.
+            Switch anytime — your content stays put.
+          </p>
+        </div>
+
+        {/* Template showcase grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
+          {[
+            { name: "Classic",     accent: "#3E5C46", bg: "#FBF8F1", text: "#1F2620", tag: "ATS-safe",      type: "centered" },
+            { name: "Modern",      accent: "#2563EB", bg: "#F8FAFC", text: "#0F172A", tag: "Popular",       type: "sidebar" },
+            { name: "Bold",        accent: "#F59E0B", bg: "#111827", text: "#F9FAFB", tag: "Striking",      type: "dark-header" },
+            { name: "Creative",    accent: "#0D9488", bg: "#F0FDFA", text: "#134E4A", tag: "Creative",      type: "color-panel" },
+            { name: "Minimal",     accent: "#111827", bg: "#FFFFFF", text: "#111827", tag: "Clean",         type: "minimal" },
+            { name: "Executive",   accent: "#7C3AED", bg: "#FAFAF9", text: "#1C1917", tag: "Senior",        type: "centered" },
+            { name: "Navy",        accent: "#B45309", bg: "#F8F7F4", text: "#1E3A5F", tag: "Corporate",     type: "dark-header" },
+            { name: "Terra",       accent: "#C2410C", bg: "#FFF7ED", text: "#431407", tag: "Warm",          type: "color-panel" },
+            { name: "Midnight",    accent: "#818CF8", bg: "#0F172A", text: "#E2E8F0", tag: "Dark",          type: "dark-header" },
+            { name: "Sidebar Pro", accent: "#06B6D4", bg: "#FFFFFF", text: "#111827", tag: "Premium",       type: "sidebar" },
+          ].map((t) => (
+            <div key={t.name} className="group cursor-pointer">
+              {/* Mini preview */}
+              <div
+                className="w-full rounded-xl overflow-hidden border border-ink/8 shadow-sm group-hover:shadow-md group-hover:scale-[1.02] transition-all duration-200"
+                style={{ aspectRatio: "3/4", background: t.bg }}
+              >
+                {t.type === "centered" && (
+                  <div className="h-full flex flex-col" style={{ padding: "12px 10px" }}>
+                    <div style={{ textAlign: "center", borderBottom: `2px solid ${t.accent}`, paddingBottom: 6, marginBottom: 6 }}>
+                      <div style={{ width: "50%", height: 5, background: t.text, opacity: 0.85, borderRadius: 1, margin: "0 auto 3px" }} />
+                      <div style={{ width: "65%", height: 2, background: t.text, opacity: 0.25, borderRadius: 1, margin: "0 auto" }} />
+                    </div>
+                    {[80, 65, 75, 55, 70, 60].map((w, i) => (
+                      <div key={i} style={{ width: `${w}%`, height: i === 0 ? 3 : 2, background: i === 0 ? t.accent : t.text, opacity: i === 0 ? 0.6 : 0.13, borderRadius: 1, marginBottom: 4 }} />
+                    ))}
+                  </div>
+                )}
+                {t.type === "sidebar" && (
+                  <div className="h-full flex">
+                    <div style={{ width: 28, background: t.accent, padding: "8px 5px", flexShrink: 0 }}>
+                      <div style={{ width: 14, height: 14, borderRadius: "50%", background: "rgba(255,255,255,0.3)", margin: "0 auto 5px" }} />
+                      {[90, 70, 80, 65, 75, 60, 70].map((w, i) => (
+                        <div key={i} style={{ width: `${w}%`, height: 2, background: "rgba(255,255,255,0.4)", borderRadius: 1, marginBottom: 3 }} />
+                      ))}
+                    </div>
+                    <div style={{ flex: 1, padding: "8px 8px" }}>
+                      <div style={{ width: "60%", height: 5, background: t.text, opacity: 0.85, borderRadius: 1, marginBottom: 3 }} />
+                      <div style={{ width: "40%", height: 2, background: t.accent, opacity: 0.6, borderRadius: 1, marginBottom: 7 }} />
+                      {[85, 70, 80, 60, 75, 55].map((w, i) => (
+                        <div key={i} style={{ width: `${w}%`, height: 2, background: t.text, opacity: 0.13, borderRadius: 1, marginBottom: 4 }} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {t.type === "dark-header" && (
+                  <div className="h-full flex flex-col">
+                    <div style={{ background: t.bg === "#111827" || t.bg === "#0F172A" ? "#1E293B" : "#1E3A5F", padding: "10px 10px 8px" }}>
+                      <div style={{ width: "55%", height: 5, background: t.accent, borderRadius: 1, marginBottom: 3 }} />
+                      <div style={{ width: "70%", height: 2, background: "rgba(255,255,255,0.35)", borderRadius: 1 }} />
+                    </div>
+                    <div style={{ flex: 1, padding: "8px 10px" }}>
+                      <div style={{ width: 26, height: 2, background: t.accent, opacity: 0.8, borderRadius: 1, marginBottom: 5 }} />
+                      {[85, 70, 80, 60, 75].map((w, i) => (
+                        <div key={i} style={{ width: `${w}%`, height: 2, background: t.text === "#E2E8F0" ? "#94A3B8" : "#6B7280", opacity: 0.45, borderRadius: 1, marginBottom: 4 }} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {t.type === "color-panel" && (
+                  <div className="h-full flex">
+                    <div style={{ width: 32, background: t.accent, padding: "10px 5px", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                      <div style={{ width: 14, height: 14, borderRadius: "50%", background: "rgba(255,255,255,0.3)", border: "1.5px solid rgba(255,255,255,0.6)" }} />
+                      {[90, 75, 80, 65, 70, 60].map((w, i) => (
+                        <div key={i} style={{ width: `${w}%`, height: 2, background: "rgba(255,255,255,0.5)", borderRadius: 1 }} />
+                      ))}
+                    </div>
+                    <div style={{ flex: 1, padding: "8px 8px" }}>
+                      <div style={{ width: "55%", height: 5, background: t.text, opacity: 0.8, borderRadius: 1, marginBottom: 3 }} />
+                      <div style={{ width: "40%", height: 2, background: t.accent, opacity: 0.5, borderRadius: 1, marginBottom: 6 }} />
+                      {[80, 65, 75, 55, 70].map((w, i) => (
+                        <div key={i} style={{ width: `${w}%`, height: 2, background: t.text, opacity: 0.13, borderRadius: 1, marginBottom: 4 }} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {t.type === "minimal" && (
+                  <div className="h-full" style={{ padding: "12px 12px", border: "1px solid #E5E7EB" }}>
+                    <div style={{ width: "48%", height: 6, background: t.text, opacity: 0.9, borderRadius: 1, marginBottom: 3 }} />
+                    <div style={{ width: "32%", height: 2, background: t.text, opacity: 0.3, borderRadius: 1, marginBottom: 2 }} />
+                    <div style={{ width: "100%", height: 1, background: t.text, opacity: 0.1, margin: "6px 0" }} />
+                    {[80, 65, 75, 55, 70, 60].map((w, i) => (
+                      <div key={i} style={{ width: `${w}%`, height: 2, background: i === 0 ? t.accent : t.text, opacity: i === 0 ? 0.5 : 0.11, borderRadius: 1, marginBottom: 4 }} />
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Label */}
+              <div className="mt-2 flex items-center justify-between px-0.5">
+                <p className="font-body text-xs font-semibold text-ink">{t.name}</p>
+                <span className="font-body text-[10px] text-ink/35 bg-ink/5 px-1.5 py-0.5 rounded-full">{t.tag}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <p className="font-body text-sm text-ink/50 mb-4">
+            All 15 templates · Switch anytime · No re-formatting needed
+          </p>
+          <button
+            onClick={() => navigate("/register")}
+            className="btn-primary px-7 py-3"
+          >
+            Try all templates free →
+          </button>
+        </div>
+      </section>
+
+      {/* ── About ─────────────────────────────────────────────── */}
+      <section id="about" className="bg-white border-y border-ink/[0.07] scroll-mt-16">
+        <div className="max-w-6xl mx-auto px-6 py-20">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+            {/* Left — text */}
+            <div>
+              <p className="font-body text-xs uppercase tracking-[0.2em] text-moss font-semibold mb-4">About</p>
+              <h2 className="font-display text-4xl text-ink mb-6 leading-tight">
+                Built for job seekers,<br />not HR software vendors.
+              </h2>
+              <p className="font-body text-base text-ink/60 leading-relaxed mb-5">
+                Most resume tools are built for recruiters — full of compliance features and locked behind enterprise contracts. We built this for the person on the other side: someone trying to get their next role, not manage a hiring pipeline.
+              </p>
+              <p className="font-body text-base text-ink/60 leading-relaxed mb-8">
+                Every feature — the ATS scorer, the AI rewriter, the cover letter generator — was designed to answer one question: does this actually help you get more interviews? If not, it's not in the product.
+              </p>
+
+              <div className="grid grid-cols-2 gap-6">
+                {[
+                  { val: "Claude AI",   label: "Powers every AI feature" },
+                  { val: "15",          label: "Professional templates" },
+                  { val: "100%",        label: "Free first resume" },
+                  { val: "No lock-in",  label: "Cancel anytime, keep your data" },
+                ].map(({ val, label }) => (
+                  <div key={label} className="border-l-2 border-moss/30 pl-4">
+                    <p className="font-display text-xl text-ink mb-0.5">{val}</p>
+                    <p className="font-body text-xs text-ink/45">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right — values cards */}
+            <div className="space-y-4">
+              {[
+                {
+                  icon: "✦",
+                  title: "AI that actually helps",
+                  body: "We use Claude — not a fine-tuned keyword stuffer — because job seekers deserve advice that sounds like a human wrote it.",
+                },
+                {
+                  icon: "◎",
+                  title: "Your data is yours",
+                  body: "We don't sell your resume data, train models on it, or share it with employers. Your application is private.",
+                },
+                {
+                  icon: "→",
+                  title: "Honest about what we are",
+                  body: "A resume builder. Not a job board, not a recruiter marketplace. We don't take commissions when you get hired.",
+                },
+                {
+                  icon: "◈",
+                  title: "Free tier that's actually free",
+                  body: "One resume, ATS scoring, and PDF export — forever, no credit card, no expiry. Upgrade when it makes sense for you.",
+                },
+              ].map((item) => (
+                <div key={item.title} className="surface-card p-5 flex gap-4">
+                  <span className="text-moss font-display text-xl flex-shrink-0 mt-0.5">{item.icon}</span>
+                  <div>
+                    <p className="font-display text-base text-ink mb-1">{item.title}</p>
+                    <p className="font-body text-sm text-ink/55 leading-relaxed">{item.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -409,17 +600,23 @@ export default function Landing() {
             <span className="font-body text-sm text-ink/40">Resume Builder</span>
           </div>
           <div className="flex items-center gap-6">
-            {["Features", "How it works", "Pricing"].map(l => (
+            {[
+              { label: "Features",     id: "features" },
+              { label: "Templates",    id: "templates" },
+              { label: "How it works", id: "how-it-works" },
+              { label: "About",        id: "about" },
+              { label: "Pricing",      id: "pricing" },
+            ].map(({ label, id }) => (
               <button
-                key={l}
-                onClick={() => scrollTo(l === "How it works" ? "how-it-works" : l.toLowerCase())}
+                key={label}
+                onClick={() => scrollTo(id)}
                 className="font-body text-xs text-ink/30 hover:text-ink/60 transition-colors"
               >
-                {l}
+                {label}
               </button>
             ))}
           </div>
-          <p className="font-body text-xs text-ink/30">Built with FastAPI, React & Claude AI</p>
+          <p className="font-body text-xs text-ink/30">&copy; 2024 Resume Builder. All rights reserved.</p>
         </div>
       </footer>
     </div>
