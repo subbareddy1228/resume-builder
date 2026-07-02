@@ -103,14 +103,20 @@ export default function Editor() {
   }
 
   async function handleTemplateChange(newTemplate: TemplateId) {
-    setTemplate(newTemplate);
-    if (!id) return;
-    try {
-      await updateTemplate(id, newTemplate);
-    } catch {
-      console.error("Failed to save template");
-    }
+  // Update UI immediately
+  setTemplate(newTemplate);
+
+  // Close template popup/card
+  setShowTemplates(false);
+
+  if (!id) return;
+
+  try {
+    await updateTemplate(id, newTemplate);
+  } catch {
+    console.error("Failed to save template");
   }
+}
 
   function setContact(field: string, value: string) {
     setContent((prev) => ({ ...prev, contact: { ...prev.contact, [field]: value } }));
@@ -255,19 +261,37 @@ export default function Editor() {
       </header>
 
       {showTemplates && (
-        <div className="border-b border-ink/[0.06] bg-white px-8 py-6 shadow-sm">
-          <div className="max-w-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="font-display text-lg text-ink">Choose a Template</h2>
-                <p className="font-body text-xs text-ink/40 mt-0.5">Select a template to instantly update the live preview</p>
-              </div>
-              <button onClick={() => setShowTemplates(false)} className="btn-ghost">✕ Close</button>
-            </div>
-            <TemplateSelector selected={template} onChange={handleTemplateChange} />
-          </div>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="w-[900px] max-h-[85vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+      <div className="flex items-center justify-between border-b p-6">
+        <div>
+          <h2 className="text-xl font-semibold">
+            Choose Resume Template
+          </h2>
+          <p className="text-sm text-gray-500">
+            Select a template to update the preview.
+          </p>
         </div>
-      )}
+
+        <button
+          onClick={() => setShowTemplates(false)}
+          className="text-xl"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div className="p-6">
+        <TemplateSelector
+          selected={template}
+          onChange={handleTemplateChange}
+        />
+      </div>
+
+    </div>
+  </div>
+)}
 
       <div className="flex h-[calc(100vh-57px)]">
         <div className="w-1/2 overflow-y-auto p-8 space-y-10">
